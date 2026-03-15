@@ -1,0 +1,874 @@
+<!doctype html>
+<html lang="en" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Link Hub Admin</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&amp;family=Playfair+Display:wght@600;700&amp;display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            heading: ['"Playfair Display"', 'Georgia', 'serif'],
+            body: ['"DM Sans"', 'system-ui', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    html, body { height: 100%; margin: 0; }
+    * { box-sizing: border-box; }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .glass-card-light {
+      background: rgba(255, 255, 255, 0.72);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.92); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateX(40px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+    @keyframes pulse-ring {
+      0% { transform: scale(0.9); opacity: 0.6; }
+      50% { transform: scale(1.1); opacity: 0.3; }
+      100% { transform: scale(0.9); opacity: 0.6; }
+    }
+
+    .anim-fade-up { animation: fadeInUp 0.5s ease-out both; }
+    .anim-fade { animation: fadeIn 0.4s ease-out both; }
+    .anim-slide-down { animation: slideDown 0.35s ease-out both; }
+    .anim-scale-in { animation: scaleIn 0.3s ease-out both; }
+    .anim-toast { animation: toastIn 0.4s ease-out both; }
+
+    .stagger-1 { animation-delay: 0.05s; }
+    .stagger-2 { animation-delay: 0.1s; }
+    .stagger-3 { animation-delay: 0.15s; }
+    .stagger-4 { animation-delay: 0.2s; }
+
+    .link-card { transition: transform 0.25s ease, box-shadow 0.25s ease; }
+    .link-card:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(0,0,0,0.12); }
+
+    .toggle-track { transition: background-color 0.25s ease; }
+    .toggle-thumb { transition: transform 0.25s ease; }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #6d28d9, #7c3aed, #8b5cf6);
+      transition: all 0.2s ease;
+    }
+    .btn-primary:hover { filter: brightness(1.1); transform: translateY(-1px); }
+    .btn-primary:active { transform: translateY(0); }
+
+    .search-input:focus { box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2); }
+
+    .skeleton {
+      background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.8s infinite;
+      border-radius: 8px;
+    }
+
+    .modal-overlay {
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+    }
+
+    .access-input {
+      letter-spacing: 12px;
+      font-size: 32px;
+      text-align: center;
+      caret-color: #7c3aed;
+    }
+
+    .gradient-mesh {
+      background:
+        radial-gradient(ellipse at 20% 50%, rgba(124,58,237,0.15) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 20%, rgba(168,85,247,0.1) 0%, transparent 50%),
+        radial-gradient(ellipse at 60% 80%, rgba(109,40,217,0.08) 0%, transparent 50%),
+        #0f0a1a;
+    }
+
+    .admin-back-btn{
+      position:absolute;
+      top:16px;
+      left:16px;
+      padding:6px 10px;
+      border-radius:8px;
+      background:rgba(255,255,255,0.05);
+      border:1px solid rgba(255,255,255,0.15);
+      color:#c4b5fd;
+      font-size:13px;
+      cursor:pointer;
+      transition:all 0.2s ease;
+    }
+
+    .admin-back-btn:hover{
+      background:rgba(255,255,255,0.12);
+      color:#ffffff;
+      border-color:rgba(255,255,255,0.25);
+    }
+  </style>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full font-body text-slate-800" style="background: #f8f7fc;"><!-- ACCESS GATE -->
+  <div id="access-gate" class="h-full w-full flex items-center justify-center gradient-mesh">
+   <div class="glass-card rounded-2xl p-10 max-w-sm w-full mx-4 anim-scale-in text-center relative">
+    <a href="index.html" class="admin-back-btn" onclick="location.replace('index.html')">← Back</a>
+    <div class="w-16 h-16 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-violet-500 to-purple-700 flex items-center justify-center shadow-lg">
+      <svg xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          width="50"
+          height="50"
+          fill="none"
+          stroke="white"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round">
+        <path d="M12 2l7 4v6c0 5-3.5 8.5-7 10-3.5-1.5-7-5-7-10V6l7-4z"/>
+        <path d="M9.5 12l2 2 3-3"/>
+      </svg>
+    </div>
+    <h1 class="font-heading text-2xl font-bold text-white mb-2">Link Hub Admin</h1>
+    
+    <p class="text-violet-300 text-sm mb-8">Enter your access code to continue</p>
+    <div class="relative mb-4"><input id="access-code" type="text" maxlength="4" inputmode="numeric" pattern="[0-9]*" autocomplete="off" class="access-input w-full bg-white/10 border border-white/20 rounded-xl py-4 text-white placeholder-white/30 focus:outline-none focus:border-violet-400 transition-colors" placeholder="····">
+    </div>
+    <p id="access-error" class="text-rose-400 text-sm mb-4 hidden">Incorrect code. Try again.</p>
+    <button id="access-btn" class="btn-primary w-full py-3.5 rounded-xl text-white font-semibold text-sm tracking-wide"> Unlock Dashboard </button>
+    <p class="text-violet-400/50 text-xs mt-6">Authorized personnel only</p>
+   </div>
+  </div><!-- DASHBOARD -->
+  <div id="dashboard" class="h-full w-full hidden" style="background: #f8f7fc;">
+   <div class="h-full w-full overflow-auto"><!-- Header -->
+    <header class="w-full" style="background: linear-gradient(135deg, #1a0a2e 0%, #2d1654 40%, #4c1d95 100%);">
+     <div class="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+      <div class="flex items-center justify-between mb-6 anim-fade-up">
+       <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-400 to-purple-600 flex items-center justify-center shadow-lg"><i data-lucide="link" class="w-5 h-5 text-white"></i>
+        </div>
+        <div>
+         <h1 id="header-title" class="font-heading text-xl sm:text-2xl font-bold text-white">Link Hub Admin</h1>
+         <p id="header-subtitle" class="text-violet-300 text-xs sm:text-sm">Manage your links</p>
+        </div>
+       </div><button id="logout-btn" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-sm transition-all border border-white/10"> <i data-lucide="log-out" class="w-4 h-4"></i> <span class="hidden sm:inline">Logout</span> </button>
+      </div><!-- Stats -->
+      <div class="grid grid-cols-4 gap-3 sm:gap-4 anim-fade-up stagger-2">
+       <div class="glass-card rounded-xl p-3 sm:p-4">
+        <div class="flex items-center gap-2 mb-1"><i data-lucide="layers" class="w-4 h-4 text-violet-300"></i> <span class="text-violet-300 text-xs">Total</span>
+        </div>
+        <p id="stat-total" class="text-white text-xl sm:text-2xl font-bold">0</p>
+       </div>
+       <div class="glass-card rounded-xl p-3 sm:p-4">
+        <div class="flex items-center gap-2 mb-1"><i data-lucide="globe" class="w-4 h-4 text-emerald-300"></i> <span class="text-emerald-300 text-xs">Published</span>
+        </div>
+        <p id="stat-published" class="text-white text-xl sm:text-2xl font-bold">0</p>
+       </div>
+       <div class="glass-card rounded-xl p-3 sm:p-4">
+        <div class="flex items-center gap-2 mb-1"><i data-lucide="file-edit" class="w-4 h-4 text-amber-300"></i> <span class="text-amber-300 text-xs">Drafts</span>
+        </div>
+        <p id="stat-drafts" class="text-white text-xl sm:text-2xl font-bold">0</p>
+       </div>
+       <div class="glass-card rounded-xl p-3 sm:p-4">
+          <div class="flex items-center gap-2 mb-1">
+            <i data-lucide="mouse-pointer-click" class="w-4 h-4 text-sky-300"></i>
+            <span class="text-sky-300 text-xs">Total Clicks</span>
+          </div>
+          <p id="stat-clicks" class="text-white text-xl sm:text-2xl font-bold">0</p>
+        </div>
+      </div>
+     </div>
+    </header><!-- Toolbar -->
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 -mt-5">
+     <div class="glass-card-light rounded-2xl p-4 shadow-lg anim-fade-up stagger-3">
+      <div class="flex flex-col sm:flex-row gap-3">
+       <div class="flex-1 relative"><i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i> <input id="search-input" type="text" placeholder="Search links..." class="search-input w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800" focus:outline-none focus:border-violet-400 transition-all">
+       </div>
+       <div class="flex gap-2"><select id="filter-select" class="px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm focus:outline-none focus:border-violet-400 text-slate-600 cursor-pointer"> <option value="all">All Links</option> <option value="published">Published</option> <option value="draft">Drafts</option> </select> <button id="add-link-btn" class="btn-primary px-5 py-2.5 rounded-xl text-white text-sm font-semibold flex items-center gap-2 whitespace-nowrap"> <i data-lucide="plus" class="w-4 h-4"></i> Add Link </button>
+       </div>
+      </div>
+     </div>
+    </div><!-- Content -->
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 py-6"><!-- Loading -->
+     <div id="loading-state" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div class="rounded-2xl overflow-hidden border border-slate-100 bg-white p-4">
+       <div class="skeleton h-36 mb-4"></div>
+       <div class="skeleton h-5 w-3/4 mb-2"></div>
+       <div class="skeleton h-4 w-1/2 mb-3"></div>
+       <div class="skeleton h-8 w-full"></div>
+      </div>
+      <div class="rounded-2xl overflow-hidden border border-slate-100 bg-white p-4 hidden sm:block">
+       <div class="skeleton h-36 mb-4"></div>
+       <div class="skeleton h-5 w-3/4 mb-2"></div>
+       <div class="skeleton h-4 w-1/2 mb-3"></div>
+       <div class="skeleton h-8 w-full"></div>
+      </div>
+      <div class="rounded-2xl overflow-hidden border border-slate-100 bg-white p-4 hidden lg:block">
+       <div class="skeleton h-36 mb-4"></div>
+       <div class="skeleton h-5 w-3/4 mb-2"></div>
+       <div class="skeleton h-4 w-1/2 mb-3"></div>
+       <div class="skeleton h-8 w-full"></div>
+      </div>
+     </div><!-- Empty State -->
+     <div id="empty-state" class="hidden text-center py-16 anim-fade-up">
+      <div class="w-20 h-20 mx-auto mb-6 rounded-full bg-violet-50 flex items-center justify-center"><i data-lucide="link-2-off" class="w-9 h-9 text-violet-300"></i>
+      </div>
+      <h3 class="font-heading text-xl font-bold text-slate-700 mb-2" id="empty-title">No links yet</h3>
+      <p class="text-slate-400 text-sm mb-6" id="empty-message">Add your first link to get started</p><button id="empty-add-btn" class="btn-primary px-6 py-3 rounded-xl text-white text-sm font-semibold inline-flex items-center gap-2"> <i data-lucide="plus" class="w-4 h-4"></i> Add Your First Link </button>
+     </div><!-- Links Grid -->
+     <div id="links-grid" class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+     </div>
+    </main>
+    <footer class="max-w-6xl mx-auto px-4 sm:px-6 pb-8 text-center">
+     <p class="text-slate-400 text-xs">Link Hub Admin · Manage with confidence</p>
+    </footer>
+   </div>
+  </div><!-- ADD/EDIT MODAL -->
+  <div id="link-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 modal-overlay">
+   <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[90%] overflow-auto anim-scale-in">
+    <div class="p-6 border-b border-slate-100">
+     <div class="flex items-center justify-between">
+      <h2 id="modal-title" class="font-heading text-xl font-bold text-slate-800">Add New Link</h2><button id="modal-close" class="w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center transition-colors"> <i data-lucide="x" class="w-5 h-5 text-slate-400"></i> </button>
+     </div>
+    </div>
+    <form id="link-form" class="p-6 space-y-4">
+     <div><label for="link-title-input" class="block text-sm font-medium text-slate-600 mb-1.5">Title *</label> <input id="link-title-input" type="text" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100 transition-all" placeholder="My Awesome Link">
+     </div>
+     <div><label for="link-url-input" class="block text-sm font-medium text-slate-600 mb-1.5">URL *</label> <input id="link-url-input" type="url" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100 transition-all" placeholder="https://example.com">
+     </div>
+     <div><label for="link-thumb-input" class="block text-sm font-medium text-slate-600 mb-1.5">Thumbnail Emoji</label> <input id="link-thumb-input" type="text" maxlength="4" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100 transition-all" placeholder="🔗">
+      <p class="text-xs text-slate-400 mt-1">Enter an emoji for the link thumbnail</p>
+     </div>
+     <div><label for="link-desc-input" class="block text-sm font-medium text-slate-600 mb-1.5">Description</label> <textarea id="link-desc-input" rows="3" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100 transition-all resize-none" placeholder="Brief description of this link..."></textarea>
+     </div>
+     <div><label for="link-categories-input" class="block text-sm font-medium text-slate-600 mb-1.5">Categories / Tags</label> <input id="link-categories-input" type="text" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100 transition-all" placeholder="Frontend, React, JavaScript">
+      <p class="text-xs text-slate-400 mt-1">Separate with commas</p>
+     </div>
+     <div class="flex items-center justify-between py-2">
+      <div>
+       <p class="text-sm font-medium text-slate-600">Publish immediately</p>
+       <p class="text-xs text-slate-400">Make this link visible to visitors</p>
+      </div><button type="button" id="publish-toggle" class="toggle-track w-11 h-6 rounded-full bg-slate-200 relative cursor-pointer" data-on="false"> <span class="toggle-thumb absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow-sm"></span> </button>
+     </div><!-- Preview -->
+     <div class="border border-slate-100 rounded-xl p-4 bg-slate-50/50">
+      <p class="text-xs font-medium text-slate-400 mb-3 uppercase tracking-wider">Preview</p>
+      <div class="flex items-center gap-3">
+       <div id="preview-thumb" class="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-100 to-purple-100 flex items-center justify-center text-2xl shrink-0">
+        🔗
+       </div>
+       <div class="min-w-0">
+        <p id="preview-title" class="text-sm font-semibold text-slate-700 truncate">Link Title</p>
+        <p id="preview-desc" class="text-xs text-slate-400 truncate">Description will appear here</p>
+       </div>
+      </div>
+     </div><input type="hidden" id="editing-id" value="">
+     <div class="flex gap-3 pt-2"><button type="button" id="modal-cancel" class="flex-1 py-3 rounded-xl border border-slate-200 text-slate-600 text-sm font-medium hover:bg-slate-50 transition-colors">Cancel</button> <button type="submit" id="modal-submit" class="btn-primary flex-1 py-3 rounded-xl text-white text-sm font-semibold flex items-center justify-center gap-2"> <span id="submit-text">Add Link</span>
+       <svg id="submit-spinner" class="hidden w-4 h-4 animate-spin text-white" fill="none" viewbox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle> <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+       </svg></button>
+     </div>
+    </form>
+   </div>
+  </div><!-- DELETE MODAL -->
+  <div id="delete-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 modal-overlay">
+   <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full anim-scale-in p-6 text-center">
+    <div class="w-14 h-14 mx-auto mb-4 rounded-full bg-rose-50 flex items-center justify-center"><i data-lucide="trash-2" class="w-6 h-6 text-rose-500"></i>
+    </div>
+    <h3 class="font-heading text-lg font-bold text-slate-800 mb-2">Delete Link?</h3>
+    <p id="delete-link-name" class="text-slate-500 text-sm mb-6">This action cannot be undone.</p>
+    <div class="flex gap-3"><button id="delete-cancel" class="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-600 text-sm font-medium hover:bg-slate-50 transition-colors">Cancel</button> <button id="delete-confirm" class="flex-1 py-2.5 rounded-xl bg-rose-500 hover:bg-rose-600 text-white text-sm font-semibold transition-colors flex items-center justify-center gap-2"> <span id="delete-text">Delete</span>
+      <svg id="delete-spinner" class="hidden w-4 h-4 animate-spin text-white" fill="none" viewbox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle> <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+      </svg></button>
+    </div>
+   </div>
+  </div><!-- TOAST CONTAINER -->
+  <div id="toast-container" class="fixed top-4 right-4 z-[60] flex flex-col gap-2 max-w-xs w-full pointer-events-none"></div>
+
+  <script type="module">
+
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { 
+    getFirestore,
+    collection,
+    addDoc,
+    getDocs,
+    updateDoc,
+    deleteDoc,
+    doc
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyC5LZc2JsBsCk0sEwG6Z2zwkvruL32fsic",
+      authDomain: "linkhub-cc92b.firebaseapp.com",
+      projectId: "linkhub-cc92b",
+      storageBucket: "linkhub-cc92b.firebasestorage.app",
+      messagingSenderId: "91268082238",
+      appId: "1:91268082238:web:989e158f2eba91a444ff6f"
+    };
+
+    const app = initializeApp(firebaseConfig);
+
+    window.db = getFirestore(app);
+    window.collection = collection;
+    window.addDoc = addDoc;
+    window.getDocs = getDocs;
+    window.updateDoc = updateDoc;
+    window.deleteDoc = deleteDoc;
+    window.doc = doc;
+
+  </script>
+  <script>
+    // ─── State ───
+    let allLinks = [];
+    let searchQuery = '';
+    let filterMode = 'all';
+    let isAuthenticated = false;
+    let deletingRecord = null;
+    let editingRecord = null;
+
+    const defaultConfig = {
+      background_color: '#f8f7fc',
+      surface_color: '#ffffff',
+      text_color: '#1e293b',
+      primary_action_color: '#7c3aed',
+      secondary_action_color: '#94a3b8',
+      font_family: 'DM Sans',
+      font_size: 14,
+      dashboard_title: 'Link Hub Admin',
+      subtitle_text: 'Manage your links',
+      empty_state_text: 'No links yet'
+    };
+
+    // ─── Toast ───
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toast-container');
+      const colors = {
+        success: 'bg-emerald-500',
+        error: 'bg-rose-500',
+        info: 'bg-violet-500'
+      };
+      const icons = { success: 'check-circle', error: 'alert-circle', info: 'info' };
+      const toast = document.createElement('div');
+      toast.className = `${colors[type]} text-white px-4 py-3 rounded-xl shadow-lg flex items-center gap-3 text-sm font-medium anim-toast pointer-events-auto`;
+      toast.innerHTML = `<i data-lucide="${icons[type]}" class="w-5 h-5 shrink-0"></i><span>${message}</span>`;
+      container.appendChild(toast);
+      lucide.createIcons({ nodes: [toast] });
+      setTimeout(() => {
+        toast.style.transition = 'opacity 0.3s, transform 0.3s';
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(20px)';
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
+    // ─── Access Gate ───
+    document.getElementById('access-btn').addEventListener('click', () => {
+      const code = document.getElementById('access-code').value;
+      if (code === '2006') {
+        isAuthenticated = true;
+        document.getElementById('access-gate').classList.add('hidden');
+        const dash = document.getElementById('dashboard');
+        dash.classList.remove('hidden');
+        dash.classList.add('anim-fade');
+        initDashboard();
+      } else {
+        const err = document.getElementById('access-error');
+        err.classList.remove('hidden');
+        document.getElementById('access-code').value = '';
+        document.getElementById('access-code').focus();
+        setTimeout(() => err.classList.add('hidden'), 3000);
+      }
+    });
+    document.getElementById('access-code').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') document.getElementById('access-btn').click();
+    });
+
+    // ─── Logout ───
+    document.getElementById('logout-btn').addEventListener('click', () => {
+      window.location.href = "index.html";
+    });
+
+    // ─── Render Links ───
+    function getFilteredLinks() {
+      return allLinks.filter(link => {
+        const matchSearch = !searchQuery ||
+          (link.title || '').toLowerCase().includes(searchQuery) ||
+          (link.description || '').toLowerCase().includes(searchQuery) ||
+          (link.url || '').toLowerCase().includes(searchQuery);
+        const matchFilter = filterMode === 'all' ||
+          (filterMode === 'published' && link.published) ||
+          (filterMode === 'draft' && !link.published);
+        return matchSearch && matchFilter;
+      });
+    }
+
+    function renderLinks() {
+      const grid = document.getElementById('links-grid');
+      const loading = document.getElementById('loading-state');
+      const empty = document.getElementById('empty-state');
+      loading.classList.add('hidden');
+
+      const filtered = getFilteredLinks();
+
+      if (allLinks.length === 0) {
+        grid.classList.add('hidden');
+        empty.classList.remove('hidden');
+        return;
+      }
+
+      empty.classList.add('hidden');
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `<div class="col-span-full text-center py-12"><p class="text-slate-400 text-sm">No links match your search or filter.</p></div>`;
+        grid.classList.remove('hidden');
+        return;
+      }
+
+      grid.classList.remove('hidden');
+
+      const existingCards = new Map([...grid.children].map(el => [el.dataset.linkId, el]));
+      const newIds = new Set(filtered.map(l => l.__backendId));
+
+      // Remove cards no longer present
+      existingCards.forEach((el, id) => { if (!newIds.has(id)) el.remove(); });
+
+      filtered.forEach((link, i) => {
+        const id = link.__backendId;
+        if (existingCards.has(id)) {
+          updateCardContent(existingCards.get(id), link);
+        } else {
+          const card = createLinkCard(link, i);
+          grid.appendChild(card);
+        }
+      });
+
+      // Update stats
+      document.getElementById('stat-total').textContent = allLinks.length;
+      document.getElementById('stat-published').textContent = allLinks.filter(l => l.published).length;
+      document.getElementById('stat-drafts').textContent = allLinks.filter(l => !l.published).length;
+
+      const totalClicks = allLinks.reduce((sum, link) => sum + (link.clicks || 0), 0);
+      document.getElementById('stat-clicks').textContent = totalClicks;
+
+      lucide.createIcons({ nodes: [grid] });
+    }
+
+    function createLinkCard(link, index) {
+      const card = document.createElement('div');
+      card.dataset.linkId = link.__backendId;
+      card.className = `link-card bg-white rounded-2xl border border-slate-100 overflow-hidden anim-fade-up`;
+      card.style.animationDelay = `${index * 0.05}s`;
+      fillCardHTML(card, link);
+      return card;
+    }
+
+    function updateCardContent(card, link) {
+      fillCardHTML(card, link);
+      lucide.createIcons({ nodes: [card] });
+    }
+
+    function fillCardHTML(card, link) {
+      const emoji = link.thumbnail || '🔗';
+      const statusColor = link.published ? 'bg-emerald-200 text-emerald-900' : 'bg-amber-200 text-amber-900';
+      const statusText = link.published ? 'Published' : 'Draft';
+      const desc = link.description || 'No description';
+      const created = link.createdAt ? new Date(link.createdAt.seconds * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '';
+
+      card.innerHTML = `
+        <div class="p-5">
+          <div class="flex items-start justify-between mb-3">
+            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-50 to-purple-100 flex items-center justify-center text-2xl">${emoji}</div>
+            <span class="text-xs font-medium px-2.5 py-1 rounded-full ${statusColor}">${statusText}</span>
+          </div>
+          <h3 class="font-heading text-base font-bold text-slate-800 mb-1 truncate">${escapeHtml(link.title || 'Untitled')}</h3>
+          <p class="text-xs text-slate-600 truncate mb-2">${escapeHtml(link.url || '')}</p>
+          <p class="text-sm text-slate-700 line-clamp-2 mb-2" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">${escapeHtml(desc)}</p>
+          ${link.categories ? `<div class="mb-2 flex flex-wrap gap-1">
+            ${link.categories.split(',').map(cat => `<span class="text-xs bg-violet-200 text-violet-900 px-2 py-1 rounded-md font-medium">${escapeHtml(cat.trim())}</span>`).join('')}
+          </div>` : ''}
+          <div class="flex items-center justify-between text-xs text-slate-600 py-2 border-t border-slate-200">
+            <span>${created}</span>
+            <span class="flex items-center gap-1"><i data-lucide="click" class="w-3 h-3"></i>${link.clicks || 0} clicks</span>
+          </div>
+            <div class="flex items-center gap-1">
+              <button data-action="toggle" data-id="${link.__backendId}" class="w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center transition-colors" title="${link.published ? 'Unpublish' : 'Publish'}">
+                <i data-lucide="${link.published ? 'eye-off' : 'eye'}" class="w-4 h-4 text-slate-400"></i>
+              </button>
+              <button data-action="edit" data-id="${link.__backendId}" class="w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center transition-colors" title="Edit">
+                <i data-lucide="pencil" class="w-4 h-4 text-slate-400"></i>
+              </button>
+              <button data-action="delete" data-id="${link.__backendId}" class="w-8 h-8 rounded-lg hover:bg-rose-50 flex items-center justify-center transition-colors" title="Delete">
+                <i data-lucide="trash-2" class="w-4 h-4 text-rose-400"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+
+      // Attach event listeners
+      card.querySelectorAll('[data-action]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const action = btn.dataset.action;
+          const record = allLinks.find(l => l.__backendId === btn.dataset.id);
+          if (!record) return;
+          if (action === 'toggle') togglePublish(record);
+          if (action === 'edit') openEditModal(record);
+          if (action === 'delete') openDeleteModal(record);
+        });
+      });
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    // ─── Modal Logic ───
+    function openModal() {
+      const modal = document.getElementById('link-modal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+    function closeModal() {
+      const modal = document.getElementById('link-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      resetForm();
+    }
+    function resetForm() {
+      document.getElementById('link-form').reset();
+      document.getElementById('editing-id').value = '';
+      document.getElementById('modal-title').textContent = 'Add New Link';
+      document.getElementById('submit-text').textContent = 'Add Link';
+      setToggle(false);
+      updatePreview();
+      editingRecord = null;
+    }
+
+    function openEditModal(link) {
+      editingRecord = link;
+      document.getElementById('modal-title').textContent = 'Edit Link';
+      document.getElementById('submit-text').textContent = 'Save Changes';
+      document.getElementById('link-title-input').value = link.title || '';
+      document.getElementById('link-url-input').value = link.url || '';
+      document.getElementById('link-thumb-input').value = link.thumbnail || '';
+      document.getElementById('link-desc-input').value = link.description || '';
+      document.getElementById('link-categories-input').value = link.categories || '';
+      document.getElementById('editing-id').value = link.__backendId;
+      setToggle(!!link.published);
+      updatePreview();
+      openModal();
+    }
+
+    // Toggle
+    const publishToggle = document.getElementById('publish-toggle');
+    function setToggle(on) {
+      publishToggle.dataset.on = on ? 'true' : 'false';
+      const thumb = publishToggle.querySelector('.toggle-thumb');
+      if (on) {
+        publishToggle.classList.remove('bg-slate-200');
+        publishToggle.classList.add('bg-violet-500');
+        thumb.style.transform = 'translateX(20px)';
+      } else {
+        publishToggle.classList.add('bg-slate-200');
+        publishToggle.classList.remove('bg-violet-500');
+        thumb.style.transform = 'translateX(0)';
+      }
+    }
+    publishToggle.addEventListener('click', () => {
+      setToggle(publishToggle.dataset.on !== 'true');
+    });
+
+    // Preview
+    function updatePreview() {
+      const title = document.getElementById('link-title-input').value || 'Link Title';
+      const desc = document.getElementById('link-desc-input').value || 'Description will appear here';
+      const thumb = document.getElementById('link-thumb-input').value || '🔗';
+      const cats = document.getElementById('link-categories-input').value;
+      document.getElementById('preview-title').textContent = title;
+      document.getElementById('preview-desc').textContent = desc;
+      document.getElementById('preview-thumb').textContent = thumb;
+    }
+    document.getElementById('link-title-input').addEventListener('input', updatePreview);
+    document.getElementById('link-desc-input').addEventListener('input', updatePreview);
+    document.getElementById('link-thumb-input').addEventListener('input', updatePreview);
+
+    // Open modals
+    document.getElementById('add-link-btn').addEventListener('click', () => { resetForm(); openModal(); });
+    document.getElementById('empty-add-btn').addEventListener('click', () => { resetForm(); openModal(); });
+    document.getElementById('modal-close').addEventListener('click', closeModal);
+    document.getElementById('modal-cancel').addEventListener('click', closeModal);
+    document.getElementById('link-modal').addEventListener('click', (e) => { if (e.target === e.currentTarget) closeModal(); });
+
+    // Delete Modal
+    function openDeleteModal(link) {
+      deletingRecord = link;
+      document.getElementById('delete-link-name').textContent = `"${link.title || 'Untitled'}" will be permanently deleted.`;
+      const modal = document.getElementById('delete-modal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+    function closeDeleteModal() {
+      const modal = document.getElementById('delete-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      deletingRecord = null;
+    }
+    document.getElementById('delete-cancel').addEventListener('click', closeDeleteModal);
+    document.getElementById('delete-modal').addEventListener('click', (e) => { if (e.target === e.currentTarget) closeDeleteModal(); });
+
+    // ─── CRUD ───
+    document.getElementById('link-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const submitBtn = document.getElementById('modal-submit');
+      const spinner = document.getElementById('submit-spinner');
+      const text = document.getElementById('submit-text');
+
+      submitBtn.disabled = true;
+      spinner.classList.remove('hidden');
+      text.textContent = editingRecord ? 'Saving...' : 'Adding...';
+
+      // Simulate API delay
+      await new Promise(r => setTimeout(r, 800));
+
+      const data = {
+        title: document.getElementById('link-title-input').value.trim(),
+        url: document.getElementById('link-url-input').value.trim(),
+        thumbnail: document.getElementById('link-thumb-input').value.trim() || '🔗',
+        description: document.getElementById('link-desc-input').value.trim(),
+        categories: document.getElementById('link-categories-input').value.trim(),
+        published: publishToggle.dataset.on === 'true',
+      };
+
+      if (editingRecord) {
+
+        await updateDoc(
+          doc(db,"links",editingRecord.__backendId),
+          data
+        );
+
+        const idx = allLinks.findIndex(l => l.__backendId === editingRecord.__backendId);
+
+        if (idx !== -1) {
+          allLinks[idx] = { ...editingRecord, ...data };
+        }
+      } else {
+        // Add new link
+        if (allLinks.length >= 999) {
+          showToast('Maximum limit of 999 links reached. Delete some first.', 'error');
+          submitBtn.disabled = false;
+          spinner.classList.add('hidden');
+          text.textContent = 'Add Link';
+          return;
+        }
+        data.__backendId = 'link_' + Date.now();
+        data.createdAt = new Date().toISOString();
+        data.clicks = 0;
+        const docRef = await addDoc(collection(db,"links"),{
+          title:data.title,
+          url:data.url,
+          thumbnail:data.thumbnail,
+          description:data.description,
+          categories:data.categories,
+          published:data.published,
+          clicks:0,
+          createdAt:new Date()
+        });
+
+        allLinks.push({
+          __backendId: docRef.id,
+          ...data,
+          clicks:0,
+          createdAt:{ seconds: Math.floor(Date.now()/1000) }
+        });
+      }
+
+      submitBtn.disabled = false;
+      spinner.classList.add('hidden');
+      text.textContent = editingRecord ? 'Save Changes' : 'Add Link';
+
+      showToast(editingRecord ? 'Link updated successfully!' : 'Link added successfully!');
+      renderLinks();
+      closeModal();
+    });
+
+    document.getElementById('delete-confirm').addEventListener('click', async () => {
+
+      if (!deletingRecord) return;
+
+      await deleteDoc(doc(db,"links", deletingRecord.__backendId));
+
+      allLinks = allLinks.filter(l => l.__backendId !== deletingRecord.__backendId);
+
+      showToast('Link deleted.', 'info');
+
+      renderLinks();
+      closeDeleteModal();
+
+    });
+
+    async function togglePublish(link){
+
+      const newStatus = !link.published;
+
+      await updateDoc(
+        doc(db,"links",link.__backendId),
+        { published:newStatus }
+      );
+
+      const idx = allLinks.findIndex(l => l.__backendId === link.__backendId);
+
+      if(idx !== -1){
+        allLinks[idx].published = newStatus;
+      }
+
+      showToast(newStatus ? 'Link published!' : 'Link unpublished.','info');
+
+      renderLinks();
+    }
+
+    // Click tracking
+    function recordClick(link) {
+      const idx = allLinks.findIndex(l => l.__backendId === link.__backendId);
+      if (idx !== -1) {
+        allLinks[idx].clicks = (allLinks[idx].clicks || 0) + 1;
+        renderLinks();
+      }
+    }
+
+    // ─── Search & Filter ───
+    document.getElementById('search-input').addEventListener('input', (e) => {
+      searchQuery = e.target.value.toLowerCase();
+      renderLinks();
+    });
+    document.getElementById('filter-select').addEventListener('change', (e) => {
+      filterMode = e.target.value;
+      renderLinks();
+    });
+
+    // Global delegation for link clicks
+    document.addEventListener('click', (e) => {
+      const linkEl = e.target.closest('a[data-link-url]');
+      if (linkEl) {
+        const linkId = linkEl.dataset.linkId;
+        const link = allLinks.find(l => l.__backendId === linkId);
+        if (link) recordClick(link);
+      }
+    });
+
+    // ─── Initialization ───
+    async function initDashboard(){
+
+    const querySnapshot = await getDocs(collection(db,"links"));
+
+    allLinks = [];
+
+    querySnapshot.forEach((docSnap)=>{
+      allLinks.push({
+      __backendId: docSnap.id,
+      ...docSnap.data()
+      });
+    });
+
+    renderLinks();
+
+    }
+
+    // ─── Element SDK ───
+    window.elementSdk.init({
+      defaultConfig,
+      async onConfigChange(config) {
+        const bg = config.background_color || defaultConfig.background_color;
+        const surface = config.surface_color || defaultConfig.surface_color;
+        const textCol = config.text_color || defaultConfig.text_color;
+        const primary = config.primary_action_color || defaultConfig.primary_action_color;
+        const secondary = config.secondary_action_color || defaultConfig.secondary_action_color;
+        const font = config.font_family || defaultConfig.font_family;
+        const size = config.font_size || defaultConfig.font_size;
+
+        document.body.style.fontFamily = `${font}, "DM Sans", system-ui, sans-serif`;
+        document.body.style.fontSize = `${size}px`;
+        document.getElementById('dashboard').style.background = bg;
+
+        document.getElementById('header-title').textContent = config.dashboard_title || defaultConfig.dashboard_title;
+        document.getElementById('header-subtitle').textContent = config.subtitle_text || defaultConfig.subtitle_text;
+        document.getElementById('empty-title').textContent = config.empty_state_text || defaultConfig.empty_state_text;
+
+        // Apply colors
+        document.querySelectorAll('.btn-primary').forEach(el => {
+          el.style.background = `linear-gradient(135deg, ${primary}, ${primary})`;
+        });
+        document.querySelectorAll('.link-card, .bg-white').forEach(el => {
+          if (!el.closest('#link-modal') && !el.closest('#delete-modal')) {
+            // Only recolor grid cards
+          }
+        });
+      },
+      mapToCapabilities(config) {
+        return {
+          recolorables: [
+            { get: () => config.background_color || defaultConfig.background_color, set: (v) => { config.background_color = v; window.elementSdk.setConfig({ background_color: v }); } },
+            { get: () => config.surface_color || defaultConfig.surface_color, set: (v) => { config.surface_color = v; window.elementSdk.setConfig({ surface_color: v }); } },
+            { get: () => config.text_color || defaultConfig.text_color, set: (v) => { config.text_color = v; window.elementSdk.setConfig({ text_color: v }); } },
+            { get: () => config.primary_action_color || defaultConfig.primary_action_color, set: (v) => { config.primary_action_color = v; window.elementSdk.setConfig({ primary_action_color: v }); } },
+            { get: () => config.secondary_action_color || defaultConfig.secondary_action_color, set: (v) => { config.secondary_action_color = v; window.elementSdk.setConfig({ secondary_action_color: v }); } },
+          ],
+          borderables: [],
+          fontEditable: { get: () => config.font_family || defaultConfig.font_family, set: (v) => { config.font_family = v; window.elementSdk.setConfig({ font_family: v }); } },
+          fontSizeable: { get: () => config.font_size || defaultConfig.font_size, set: (v) => { config.font_size = v; window.elementSdk.setConfig({ font_size: v }); } },
+        };
+      },
+      mapToEditPanelValues(config) {
+        return new Map([
+          ['dashboard_title', config.dashboard_title || defaultConfig.dashboard_title],
+          ['subtitle_text', config.subtitle_text || defaultConfig.subtitle_text],
+          ['empty_state_text', config.empty_state_text || defaultConfig.empty_state_text],
+        ]);
+      }
+    });
+
+    // Init icons
+    window.addEventListener("load", () => {
+  lucide.createIcons();
+});
+
+    // Back button
+    document.getElementById("back-btn").onclick = () => {
+      window.location.href = "index.html";
+    };
+  </script>
+</html>

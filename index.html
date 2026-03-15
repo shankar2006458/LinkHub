@@ -1,0 +1,563 @@
+<!doctype html>
+<html lang="en" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Link Hub</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&amp;family=Playfair+Display:wght@600;700&amp;display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; height: 100%; }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulse-ring {
+      0% { transform: scale(0.95); opacity: 0.5; }
+      50% { transform: scale(1.05); opacity: 0.2; }
+      100% { transform: scale(0.95); opacity: 0.5; }
+    }
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+    @keyframes spin-slow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+
+    .animate-fade-up { animation: fadeInUp 0.6s ease-out forwards; opacity: 0; }
+    .animate-pulse-ring { animation: pulse-ring 2s ease-in-out infinite; }
+    .animate-shimmer {
+      background: linear-gradient(90deg, transparent 25%, rgba(255,255,255,0.08) 50%, transparent 75%);
+      background-size: 200% 100%;
+      animation: shimmer 2s infinite;
+    }
+    .animate-spin-slow { animation: spin-slow 3s linear infinite; }
+    .animate-float { animation: float 3s ease-in-out infinite; }
+
+    .link-card {
+      transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .link-card:hover {
+      transform: translateY(-3px) scale(1.01);
+    }
+    .link-card:active {
+      transform: translateY(0) scale(0.99);
+    }
+
+    .social-btn {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .social-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .glass-card {
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+
+    .profile-ring {
+      background: conic-gradient(from 0deg, #6366f1, #ec4899, #f59e0b, #10b981, #6366f1);
+      padding: 2px;
+      border-radius: 9999px;
+    }
+
+    .gradient-text {
+      background: linear-gradient(
+        90deg,
+        #5227FF,
+        #FF9FFC,
+        #B19EEF,
+        #5227FF
+      );
+      background-size: 300% 100%;
+      animation: gradientMove 8s linear infinite;
+
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    @keyframes gradientMove {
+      0% {
+        background-position: 0% 50%;
+      }
+      100% {
+        background-position: 300% 50%;
+      }
+    }
+
+    .noise-overlay {
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    }
+
+    .toast-enter { animation: fadeInUp 0.3s ease-out forwards; }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
+    
+
+    .shiny-text {
+      position: relative;
+      display: inline-block;
+      color: #b5b5b5;
+      background: linear-gradient(
+        120deg,
+        #7c7cff 0%,
+        #ff9ffc 30%,
+        #ffffff 50%,
+        #b19eef 70%,
+        #7c7cff 100%
+      );
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+
+      animation: shinyMove 2s linear infinite;
+    }
+
+    @keyframes shinyMove {
+      0% {
+        background-position: 150% center;
+      }
+      100% {
+        background-position: -50% center;
+      }
+    }
+  </style>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            outfit: ['Outfit', 'sans-serif'],
+            display: ['Playfair Display', 'serif'],
+          }
+        }
+      }
+    };
+  </script>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full font-outfit">
+  <div id="app-wrapper" class="h-full w-full overflow-auto relative" style="background: linear-gradient(145deg, #0f0b1e 0%, #1a1035 30%, #0d1b2a 60%, #0a0a1a 100%);"><!-- Decorative orbs -->
+   <div class="fixed top-0 left-0 w-full h-full pointer-events-none overflow-hidden" aria-hidden="true">
+    <div class="absolute top-[-10%] right-[-5%] w-72 h-72 rounded-full opacity-20" style="background: radial-gradient(circle, #6366f1, transparent 70%); filter: blur(60px);"></div>
+    <div class="absolute top-[40%] left-[-10%] w-96 h-96 rounded-full opacity-15" style="background: radial-gradient(circle, #ec4899, transparent 70%); filter: blur(80px);"></div>
+    <div class="absolute bottom-[-5%] right-[20%] w-64 h-64 rounded-full opacity-10" style="background: radial-gradient(circle, #f59e0b, transparent 70%); filter: blur(50px);"></div>
+   </div><!-- Noise texture overlay -->
+   <div class="fixed inset-0 noise-overlay pointer-events-none" aria-hidden="true"></div>
+   <main class="relative z-10 w-full max-w-lg mx-auto px-5 py-10 pb-16"><!-- Profile Section -->
+    <header class="text-center mb-10 animate-fade-up" style="animation-delay: 0.1s;"><!-- Profile Image -->
+     <div class="flex justify-center mb-5">
+      <div class="profile-ring">
+        <div class="profile-ring">
+          <img id="profile-avatar"
+              src="avatar.jpg"
+              class="w-80 h-80 rounded-full object-cover"
+              alt="Profile">
+        </div>
+      </div>
+     </div>
+      <h1 id="profile-name" class="text-5xl font-bold shiny-text mb-2 font-display tracking-tight"></h1>    
+    <p id="profile-bio" class="text-sm text-gray-400 max-w-xs mx-auto leading-relaxed font-light"></p>
+    <!-- Social Icons + Admin Lock -->
+     <nav class="flex justify-center gap-3 mt-5" aria-label="Social links"><a id="social-github" href="#" target="_blank" rel="noopener noreferrer" class="social-btn w-10 h-10 rounded-full glass-card bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 hover:border-white/20" aria-label="GitHub" style="display:none;">
+       <svg width="18" height="18" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+       </svg></a> <a id="social-linkedin" href="#" target="_blank" rel="noopener noreferrer" class="social-btn w-10 h-10 rounded-full glass-card bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 hover:border-white/20" aria-label="LinkedIn" style="display:none;">
+       <svg width="18" height="18" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle>
+       </svg></a> <a id="social-instagram" href="#" target="_blank" rel="noopener noreferrer" class="social-btn w-10 h-10 rounded-full glass-card bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 hover:border-white/20" aria-label="Instagram" style="display:none;">
+       <svg width="18" height="18" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><circle cx="17.5" cy="6.5" r="1.5"></circle>
+       </svg></a>  <a href="admin.html" class="social-btn w-10 h-10 rounded-full glass-card bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 hover:border-white/20 transition-all duration-300" aria-label="Admin">
+       <svg width="18" height="18" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+       </svg></a>
+     </nav>
+    </header><!-- Loading State -->
+    <div id="loading-state" class="flex flex-col items-center justify-center py-16">
+     <div class="relative">
+      <div class="w-10 h-10 border-2 border-indigo-500/30 rounded-full animate-spin-slow"></div>
+      <div class="absolute inset-0 w-10 h-10 border-2 border-transparent border-t-indigo-400 rounded-full animate-spin-slow"></div>
+     </div>
+     <p class="text-gray-500 text-sm mt-4 font-light">Loading links...</p>
+    </div><!-- Empty State -->
+    <div id="empty-state" class="hidden text-center py-16">
+     <div class="animate-float inline-block mb-4">
+      <div class="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mx-auto"><i data-lucide="link-2" style="width:28px; height:28px; color: #4b5563;"></i>
+      </div>
+     </div>
+     <p class="text-gray-500 text-sm font-light">No links yet</p>
+     <p class="text-gray-600 text-xs mt-1">Add your first link above to get started</p>
+    </div><!-- Links Container -->
+    <section id="links-container" class="space-y-3 hidden" aria-label="Links"></section><!-- Footer -->
+    <footer class="text-center mt-12 animate-fade-up" style="animation-delay: 0.6s;">
+     <div class="flex items-center justify-center gap-1.5 text-gray-600 text-xs"><span>Made by</span> <span class="gradient-text font-semibold">Shankar Prasad Pyke</span>
+     </div>
+    </footer>
+   </main><!-- Toast container -->
+   <div id="toast-container" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 flex flex-col gap-2 items-center pointer-events-none"></div>
+  </div>
+
+  <script type="module">
+
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { 
+    getFirestore,
+    collection,
+    getDocs,
+    onSnapshot,
+    doc,
+    updateDoc,
+    increment
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyC5LZc2JsBsCk0sEwG6Z2zwkvruL32fsic",
+      authDomain: "linkhub-cc92b.firebaseapp.com",
+      projectId: "linkhub-cc92b",
+      storageBucket: "linkhub-cc92b.firebasestorage.app",
+      messagingSenderId: "91268082238",
+      appId: "1:91268082238:web:989e158f2eba91a444ff6f"
+    };
+
+    const app = initializeApp(firebaseConfig);
+
+    window.db = getFirestore(app);
+    window.collection = collection;
+    window.getDocs = getDocs;
+    window.onSnapshot = onSnapshot;
+    window.doc = doc;
+    window.updateDoc = updateDoc;
+    window.increment = increment;
+
+  </script>
+  <script>
+    // ── State ──
+    let allLinks = [];
+
+    // ── Default Config ──
+    const defaultConfig = {
+      background_color: '#0f0b1e',
+      surface_color: '#1a1035',
+      text_color: '#e2e8f0',
+      primary_action_color: '#6366f1',
+      secondary_action_color: '#ec4899',
+      font_family: 'Outfit',
+      font_size: 14,
+      profile_name: 'Shankar Prasad Pyke',
+      profile_bio: 'Designer, developer & creative thinker. Building things that matter.',
+      github_url: 'https://github.com/shankar2006458',
+      linkedin_url: 'https://www.linkedin.com/in/shankar-prasad-pyke-989257371/',
+      instagram_url: 'https://www.instagram.com/offx._.shankar?igsh=cGNnaGI1M3dyb2Zu'
+    };
+
+    // ── Utility: Emoji fallback pool ──
+    const emojiPool = ['🔗', '🌐', '📎', '💡', '⚡', '🎯', '📌', '✨'];
+    function getEmoji(emoji, index) {
+      return emoji || emojiPool[index % emojiPool.length];
+    }
+
+    // ── Toast Notification ──
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      const colors = type === 'success' ? 'bg-emerald-500/90 text-white' : 'bg-red-500/90 text-white';
+      toast.className = `toast-enter pointer-events-auto px-4 py-2.5 rounded-xl text-xs font-medium ${colors} glass-card shadow-lg`;
+      toast.textContent = message;
+      container.appendChild(toast);
+      setTimeout(() => { toast.style.opacity = '0'; toast.style.transition = 'opacity 0.3s'; }, 2500);
+      setTimeout(() => toast.remove(), 2800);
+    }
+
+    // ── Load Links from Firestore ──
+    function loadLinks(){
+
+      if(!window.db){
+        setTimeout(loadLinks,200);
+        return;
+      }
+
+      onSnapshot(collection(window.db,"links"), (snapshot)=>{
+
+        const links = [];
+
+        snapshot.forEach(doc=>{
+          links.push({
+            id: doc.id,
+            ...doc.data()
+          });
+        });
+
+        renderLinks(links);
+
+      });
+
+    }
+
+
+    // ── Render Links ──
+    function renderLinks(data) {
+      const container = document.getElementById('links-container');
+      const loadingState = document.getElementById('loading-state');
+      const emptyState = document.getElementById('empty-state');
+
+      loadingState.classList.add('hidden');
+
+      // Filter only published links
+      const published = data.filter(l => l.published);
+      published.sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
+
+      if (published.length === 0) {
+        container.classList.add('hidden');
+        emptyState.classList.remove('hidden');
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+      container.classList.remove('hidden');
+
+      // Build a map of existing card elements
+      const existingCards = new Map();
+      container.querySelectorAll('[data-link-id]').forEach(el => {
+        existingCards.set(el.dataset.linkId, el);
+      });
+
+      const currentIds = new Set(published.map(l => l.id || l.__backendId));
+
+      // Remove cards no longer present
+      existingCards.forEach((el, id) => {
+        if (!currentIds.has(id)) el.remove();
+      });
+
+      // Update or create cards
+      published.forEach((link, index) => {
+        const id = link.id || link.__backendId;
+        const existing = existingCards.get(id);
+
+        if (existing) {
+          // Update in place
+          const titleEl = existing.querySelector('.link-title');
+          const descEl = existing.querySelector('.link-desc');
+          const emojiEl = existing.querySelector('.link-emoji');
+          const anchor = existing.querySelector('a');
+          if (titleEl) titleEl.textContent = link.title || 'Untitled';
+          if (descEl) descEl.textContent = link.description || '';
+          if (emojiEl) emojiEl.textContent = getEmoji(link.thumbnail, index);
+          if (anchor) anchor.href = link.url || '#';
+        } else {
+          // Create new card
+          const card = document.createElement('div');
+          card.dataset.linkId = id;
+          card.className = 'link-card animate-fade-up';
+          card.style.animationDelay = `${0.1 + index * 0.08}s`;
+
+          const emoji = getEmoji(link.thumbnail, index);
+          const desc = link.description ? `<p class="link-desc text-xs text-gray-500 mt-0.5 line-clamp-1 font-light">${escapeHtml(link.description)}</p>` : '';
+          
+          let createdDate = '';
+
+          if (link.createdAt) {
+            if (link.createdAt.seconds) {
+              createdDate = new Date(link.createdAt.seconds * 1000);
+            } else {
+              createdDate = new Date(link.createdAt);
+            }
+          }
+
+          card.innerHTML = `
+            <a href="${escapeHtml(link.url || '#')}" 
+              onclick="trackClick('${id}')"
+              target="_blank" rel="noopener noreferrer"
+               class="flex items-center gap-4 p-4 glass-card bg-white/[0.04] border border-white/[0.08] rounded-2xl hover:bg-white/[0.08] hover:border-white/[0.15] hover:shadow-lg hover:shadow-indigo-500/5 group">
+              <div class="link-emoji w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 border border-white/[0.06] flex items-center justify-center text-xl flex-shrink-0 group-hover:scale-105 transition-transform duration-300">${emoji}</div>
+              <div class="flex-1 min-w-0">
+                <h3 class="link-title text-sm font-semibold text-white truncate">${escapeHtml(link.title || 'Untitled')}</h3>
+                ${desc}
+              </div>
+              <div class="flex-shrink-0 w-8 h-8 rounded-full bg-white/[0.04] flex items-center justify-center text-gray-500 group-hover:text-indigo-400 group-hover:bg-indigo-500/10 transition-all duration-300 group-hover:translate-x-0.5">
+                <i data-lucide="arrow-right" style="width:16px; height:16px;"></i>
+              </div>
+            </a>
+          `;
+          container.appendChild(card);
+        }
+      });
+
+      lucide.createIcons();
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    async function trackClick(linkId){
+
+      try{
+
+        await updateDoc(
+          doc(db,"links",linkId),
+          { clicks: increment(1) }
+        );
+
+      }catch(err){
+        console.error("Click update failed",err);
+      }
+
+    }
+
+    // ── Apply Config to UI ──
+    function applyConfig(config) {
+      const c = { ...defaultConfig, ...config };
+      const customFont = c.font_family || defaultConfig.font_family;
+      const baseFontStack = 'Outfit, sans-serif';
+      const fontStack = `${customFont}, ${baseFontStack}`;
+      const baseSize = c.font_size || defaultConfig.font_size;
+
+      // Profile
+      const nameEl = document.getElementById('profile-name');
+      const bioEl = document.getElementById('profile-bio');
+      const avatarEl = document.getElementById('profile-avatar');
+      nameEl.textContent = c.profile_name || defaultConfig.profile_name;
+      nameEl.style.fontFamily = `'Playfair Display', ${fontStack}`;
+      nameEl.style.fontSize = `${baseSize * 1.6}px`;
+      nameEl.style.color = c.text_color || defaultConfig.text_color;
+
+      bioEl.textContent = c.profile_bio || defaultConfig.profile_bio;
+      bioEl.style.fontFamily = fontStack;
+      bioEl.style.fontSize = `${baseSize * 0.9}px`;
+
+      // Social links visibility
+      const socials = [
+        { id: 'social-github', key: 'github_url' },
+        { id: 'social-linkedin', key: 'linkedin_url' },
+        { id: 'social-instagram', key: 'instagram_url' }
+      ];
+      socials.forEach(s => {
+        const el = document.getElementById(s.id);
+        const url = c[s.key];
+        if (url && url.trim()) {
+          el.style.display = 'flex';
+          el.href = url;
+        } else {
+          el.style.display = 'none';
+        }
+      });
+
+      // Colors
+      const bgColor = c.background_color || defaultConfig.background_color;
+      const surfaceColor = c.surface_color || defaultConfig.surface_color;
+      const primaryColor = c.primary_action_color || defaultConfig.primary_action_color;
+      const secondaryColor = c.secondary_action_color || defaultConfig.secondary_action_color;
+
+      const wrapper = document.getElementById('app-wrapper');
+      wrapper.style.background = `linear-gradient(145deg, ${bgColor} 0%, ${surfaceColor} 30%, ${adjustColor(bgColor, 10)} 60%, ${bgColor} 100%)`;
+
+      // Primary button color
+      const submitBtn = document.getElementById('submit-link-btn');
+      if (submitBtn) {
+        submitBtn.style.backgroundColor = primaryColor;
+      }
+
+      // Font for general body
+      document.body.style.fontFamily = fontStack;
+      document.body.style.fontSize = `${baseSize}px`;
+
+      // Update link card titles font
+      document.querySelectorAll('.link-title').forEach(el => {
+        el.style.fontFamily = fontStack;
+        el.style.fontSize = `${baseSize}px`;
+      });
+    }
+
+    function adjustColor(hex, amount) {
+      // Simple brightness shift
+      let r = parseInt(hex.slice(1,3), 16);
+      let g = parseInt(hex.slice(3,5), 16);
+      let b = parseInt(hex.slice(5,7), 16);
+      r = Math.min(255, r + amount);
+      g = Math.min(255, g + amount);
+      b = Math.min(255, b + amount);
+      return `#${r.toString(16).padStart(2,'0')}${g.toString(16).padStart(2,'0')}${b.toString(16).padStart(2,'0')}`;
+    }
+
+    // ── Form Handling ──
+    // Removed - no longer adding links on public page
+
+    // ── Element SDK Init ──
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange: async (config) => {
+          applyConfig(config);
+        },
+        mapToCapabilities: (config) => ({
+          recolorables: [
+            {
+              get: () => config.background_color || defaultConfig.background_color,
+              set: (v) => { config.background_color = v; window.elementSdk.setConfig({ background_color: v }); }
+            },
+            {
+              get: () => config.surface_color || defaultConfig.surface_color,
+              set: (v) => { config.surface_color = v; window.elementSdk.setConfig({ surface_color: v }); }
+            },
+            {
+              get: () => config.text_color || defaultConfig.text_color,
+              set: (v) => { config.text_color = v; window.elementSdk.setConfig({ text_color: v }); }
+            },
+            {
+              get: () => config.primary_action_color || defaultConfig.primary_action_color,
+              set: (v) => { config.primary_action_color = v; window.elementSdk.setConfig({ primary_action_color: v }); }
+            },
+            {
+              get: () => config.secondary_action_color || defaultConfig.secondary_action_color,
+              set: (v) => { config.secondary_action_color = v; window.elementSdk.setConfig({ secondary_action_color: v }); }
+            }
+          ],
+          borderables: [],
+          fontEditable: {
+            get: () => config.font_family || defaultConfig.font_family,
+            set: (v) => { config.font_family = v; window.elementSdk.setConfig({ font_family: v }); }
+          },
+          fontSizeable: {
+            get: () => config.font_size || defaultConfig.font_size,
+            set: (v) => { config.font_size = v; window.elementSdk.setConfig({ font_size: v }); }
+          }
+        }),
+        mapToEditPanelValues: (config) => new Map([
+          ['profile_name', config.profile_name || defaultConfig.profile_name],
+          ['profile_bio', config.profile_bio || defaultConfig.profile_bio],
+          ['github_url', config.github_url || defaultConfig.github_url],
+          ['linkedin_url', config.linkedin_url || defaultConfig.linkedin_url],
+          ['instagram_url', config.instagram_url || defaultConfig.instagram_url],
+          ['twitter_url', config.twitter_url || defaultConfig.twitter_url]
+        ])
+      });
+    }
+
+    // Apply defaults on load
+    applyConfig(defaultConfig);
+    loadLinks();
+
+  </script>
+</html>
