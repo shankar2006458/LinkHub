@@ -110,7 +110,6 @@
     ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
     ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
     
-
     .shiny-text {
       position: relative;
       display: inline-block;
@@ -139,6 +138,8 @@
         background-position: -50% center;
       }
     }
+
+    
   </style>
   <script>
     tailwind.config = {
@@ -170,7 +171,7 @@
         <div class="profile-ring">
           <img id="profile-avatar"
               src="avatar.jpg"
-              class="w-80 h-80 rounded-full object-cover"
+              class="w-64 h-64 sm:w-80 sm:h-80 rounded-full object-cover"
               alt="Profile">
         </div>
       </div>
@@ -215,6 +216,51 @@
     </footer>
    </main><!-- Toast container -->
    <div id="toast-container" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 flex flex-col gap-2 items-center pointer-events-none"></div>
+  </div>
+
+  <!-- Link Popup -->
+  <div id="link-popup"
+  class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-xl p-4">
+
+    <div id="popup-box"
+    class="w-full max-w-md mx-4
+    max-h-[85vh]
+    overflow-y-auto
+    glass-card
+    rounded-3xl
+    p-6 pb-7
+    animate-fade-up
+    border border-white/10">
+
+      <div class="flex justify-between items-center mb-4">
+        <h2 id="popup-header" class="text-xl sm:text-lg font-semibold">Link Info</h2>
+
+        <button onclick="closePopup()"
+        class="w-8 h-8 flex items-center justify-center rounded-full bg-white/10 text-white">
+        ✕
+        </button>
+      </div>
+
+      <div class="flex items-center gap-4 mb-4">
+        <div id="popup-icon"
+        class="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center text-xl"></div>
+
+        <div class="flex-1">
+          <h3 id="popup-title" class="font-semibold"></h3>
+          <p id="popup-date" class="text-xs text-gray-400"></p>
+        </div>
+      </div>
+
+      <p id="popup-desc" class="text-[15px] leading-relaxed mb-6"></p>
+
+      <a id="popup-link"
+      target="_blank"
+      class="block text-center w-full py-3 rounded-xl font-medium">
+      Open Link
+      </a>
+
+    </div>
+
   </div>
 
   <script type="module">
@@ -371,7 +417,7 @@
           card.style.animationDelay = `${0.1 + index * 0.08}s`;
 
           const emoji = getEmoji(link.thumbnail, index);
-          const desc = link.description ? `<p class="link-desc text-xs text-gray-500 mt-0.5 line-clamp-1 font-light">${escapeHtml(link.description)}</p>` : '';
+          const desc = link.description ? `<p class="link-desc text-sm text-white/75 mt-1 line-clamp-1 font-light">${escapeHtml(link.description)}</p>` : '';
           
           let createdDate = '';
 
@@ -384,19 +430,27 @@
           }
 
           card.innerHTML = `
-            <a href="${escapeHtml(link.url || '#')}" 
-              onclick="trackClick('${id}')"
-              target="_blank" rel="noopener noreferrer"
-               class="flex items-center gap-4 p-4 glass-card bg-white/[0.04] border border-white/[0.08] rounded-2xl hover:bg-white/[0.08] hover:border-white/[0.15] hover:shadow-lg hover:shadow-indigo-500/5 group">
-              <div class="link-emoji w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 border border-white/[0.06] flex items-center justify-center text-xl flex-shrink-0 group-hover:scale-105 transition-transform duration-300">${emoji}</div>
-              <div class="flex-1 min-w-0">
-                <h3 class="link-title text-sm font-semibold text-white truncate">${escapeHtml(link.title || 'Untitled')}</h3>
-                ${desc}
-              </div>
-              <div class="flex-shrink-0 w-8 h-8 rounded-full bg-white/[0.04] flex items-center justify-center text-gray-500 group-hover:text-indigo-400 group-hover:bg-indigo-500/10 transition-all duration-300 group-hover:translate-x-0.5">
-                <i data-lucide="arrow-right" style="width:16px; height:16px;"></i>
-              </div>
+          <div onclick='openPopup(${JSON.stringify(link)})'
+          class="flex items-center gap-4 p-4 glass-card bg-white/[0.04] border border-white/[0.08] rounded-2xl hover:bg-white/[0.08] hover:border-white/[0.15] hover:shadow-lg group cursor-pointer">
+
+            <div class="link-emoji w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 border border-white/[0.06] flex items-center justify-center text-xl flex-shrink-0">${emoji}</div>
+
+            <div class="flex-1 min-w-0">
+              <h3 class="link-title shiny-text text-sm font-semibold truncate">${escapeHtml(link.title || 'Untitled')}</h3>
+              ${desc}
+            </div>
+
+            <!-- Arrow button -->
+            <a href="${escapeHtml(link.url || '#')}"
+              onclick="event.stopPropagation(); trackClick('${id}')"
+              target="_blank"
+              class="flex-shrink-0 w-8 h-8 rounded-full bg-white/[0.04] flex items-center justify-center text-gray-400 hover:text-indigo-400">
+
+              <i data-lucide="arrow-right" style="width:16px;height:16px;"></i>
+
             </a>
+
+          </div>
           `;
           container.appendChild(card);
         }
@@ -424,6 +478,48 @@
         console.error("Click update failed",err);
       }
 
+    }
+
+    // ── Link Popup ──
+    function openPopup(link){
+
+      const popup = document.getElementById("link-popup");
+
+      document.getElementById("popup-title").textContent = link.title || "Untitled";
+      document.getElementById("popup-desc").textContent = link.description || "No description";
+
+      document.getElementById("popup-icon").textContent = link.thumbnail || "🔗";
+
+      let date = "";
+      if(link.createdAt){
+        if(link.createdAt.seconds){
+          date = new Date(link.createdAt.seconds * 1000);
+        }else{
+          date = new Date(link.createdAt);
+        }
+      }
+
+      document.getElementById("popup-date").textContent =
+        date ? date.toLocaleDateString() : "";
+
+      const linkBtn = document.getElementById("popup-link");
+      linkBtn.href = link.url || "#";
+
+      popup.classList.remove("hidden");
+      popup.classList.add("flex");
+
+    }
+
+    document.getElementById("link-popup").addEventListener("click",(e)=>{
+      if(e.target.id === "link-popup"){
+        closePopup()
+      }
+    });
+
+    function closePopup(){
+      const popup = document.getElementById("link-popup");
+      popup.classList.remove("flex");
+      popup.classList.add("hidden");
     }
 
     // ── Apply Config to UI ──
@@ -488,6 +584,29 @@
         el.style.fontFamily = fontStack;
         el.style.fontSize = `${baseSize}px`;
       });
+
+      // Popup styling
+      const popupBox = document.getElementById("popup-box")
+      const popupTitle = document.getElementById("popup-title")
+      const popupHeader = document.getElementById("popup-header")
+      const popupDesc = document.getElementById("popup-desc")
+      const popupBtn = document.getElementById("popup-link")
+
+      if(popupBox){
+
+        popupBox.style.background = surfaceColor
+        popupBox.style.color = c.text_color
+
+      }
+
+      if(popupTitle) popupTitle.style.color = c.text_color
+      if(popupHeader) popupHeader.style.color = c.text_color
+      if(popupDesc) popupDesc.style.color = "#9ca3af"
+
+      if(popupBtn){
+        popupBtn.style.background = primaryColor
+        popupBtn.style.color = "#fff"
+      }
     }
 
     function adjustColor(hex, amount) {
