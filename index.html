@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en" class="h-full">
- <head>
+<head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Link Hub</title>
@@ -73,28 +73,17 @@
     }
 
     .gradient-text {
-      background: linear-gradient(
-        90deg,
-        #5227FF,
-        #FF9FFC,
-        #B19EEF,
-        #5227FF
-      );
+      background: linear-gradient(90deg, #5227FF, #FF9FFC, #B19EEF, #5227FF);
       background-size: 300% 100%;
       animation: gradientMove 8s linear infinite;
-
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
 
     @keyframes gradientMove {
-      0% {
-        background-position: 0% 50%;
-      }
-      100% {
-        background-position: 300% 50%;
-      }
+      0% { background-position: 0% 50%; }
+      100% { background-position: 300% 50%; }
     }
 
     .noise-overlay {
@@ -103,7 +92,6 @@
 
     .toast-enter { animation: fadeInUp 0.3s ease-out forwards; }
 
-    /* Custom scrollbar */
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
@@ -113,32 +101,18 @@
       position: relative;
       display: inline-block;
       color: #b5b5b5;
-      background: linear-gradient(
-        120deg,
-        #7c7cff 0%,
-        #ff9ffc 30%,
-        #ffffff 50%,
-        #b19eef 70%,
-        #7c7cff 100%
-      );
+      background: linear-gradient(120deg, #7c7cff 0%, #ff9ffc 30%, #ffffff 50%, #b19eef 70%, #7c7cff 100%);
       background-size: 200% auto;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-
       animation: shinyMove 2s linear infinite;
     }
 
     @keyframes shinyMove {
-      0% {
-        background-position: 150% center;
-      }
-      100% {
-        background-position: -50% center;
-      }
+      0% { background-position: 150% center; }
+      100% { background-position: -50% center; }
     }
-
-    
   </style>
   <script>
     tailwind.config = {
@@ -152,564 +126,399 @@
       }
     };
   </script>
-  <style>body { box-sizing: border-box; }</style>
- </head>
- <body class="h-full font-outfit">
-  <div id="app-wrapper" class="h-full w-full overflow-auto relative" style="background: linear-gradient(145deg, #0f0b1e 0%, #1a1035 30%, #0d1b2a 60%, #0a0a1a 100%);"><!-- Decorative orbs -->
-   <div class="fixed top-0 left-0 w-full h-full pointer-events-none overflow-hidden" aria-hidden="true">
+</head>
+<body class="h-full font-outfit">
+<div id="app-wrapper" class="h-full w-full overflow-auto relative" style="background: linear-gradient(145deg, #0f0b1e 0%, #1a1035 30%, #0d1b2a 60%, #0a0a1a 100%);">
+  <!-- Decorative orbs -->
+  <div class="fixed top-0 left-0 w-full h-full pointer-events-none overflow-hidden" aria-hidden="true">
     <div class="absolute top-[-10%] right-[-5%] w-72 h-72 rounded-full opacity-20" style="background: radial-gradient(circle, #6366f1, transparent 70%); filter: blur(60px);"></div>
     <div class="absolute top-[40%] left-[-10%] w-96 h-96 rounded-full opacity-15" style="background: radial-gradient(circle, #ec4899, transparent 70%); filter: blur(80px);"></div>
     <div class="absolute bottom-[-5%] right-[20%] w-64 h-64 rounded-full opacity-10" style="background: radial-gradient(circle, #f59e0b, transparent 70%); filter: blur(50px);"></div>
-   </div><!-- Noise texture overlay -->
-   <div class="fixed inset-0 noise-overlay pointer-events-none" aria-hidden="true"></div>
-   <main class="relative z-10 w-full max-w-2xl mx-auto px-5 py-10 pb-16"><!-- Profile Section -->
-    <header class="text-center mb-10 animate-fade-up" style="animation-delay: 0.1s;"><!-- Profile Image -->
-     <div class="flex justify-center mb-5">
-      <div class="profile-ring">
+  </div>
+  <div class="fixed inset-0 noise-overlay pointer-events-none" aria-hidden="true"></div>
+  
+  <main class="relative z-10 w-full max-w-2xl mx-auto px-5 py-10 pb-16">
+    <!-- Profile Section -->
+    <header class="text-center mb-10 animate-fade-up" style="animation-delay: 0.1s;">
+      <div class="flex justify-center mb-5">
         <div class="profile-ring">
-          <img id="profile-avatar"
-              src="avatar.jpg"
-              class="w-64 h-64 sm:w-80 sm:h-80 rounded-full object-cover"
-              alt="Profile">
+          <div class="profile-ring">
+            <img id="profile-avatar" src="avatar.jpg" class="w-64 h-64 sm:w-80 sm:h-80 rounded-full object-cover" alt="Profile">
+          </div>
         </div>
       </div>
-     </div>
       <h1 id="profile-name" class="text-3xl sm:text-5xl font-bold shiny-text mb-2 font-display tracking-tight"></h1>    
-    <p id="profile-bio" class="text-sm text-gray-400 max-w-xs mx-auto leading-relaxed font-light"></p>
-    <!-- Social Icons + Admin Lock -->
-     <nav class="flex justify-center gap-3 mt-5" aria-label="Social links"><a id="social-github" href="#" target="_blank" rel="noopener noreferrer" class="social-btn w-10 h-10 rounded-full glass-card bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 hover:border-white/20" aria-label="GitHub" style="display:none;">
-       <svg width="18" height="18" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
-       </svg></a> <a id="social-linkedin" href="#" target="_blank" rel="noopener noreferrer" class="social-btn w-10 h-10 rounded-full glass-card bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 hover:border-white/20" aria-label="LinkedIn" style="display:none;">
-       <svg width="18" height="18" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle>
-       </svg></a> <a id="social-instagram" href="#" target="_blank" rel="noopener noreferrer" class="social-btn w-10 h-10 rounded-full glass-card bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 hover:border-white/20" aria-label="Instagram" style="display:none;">
-       <svg width="18" height="18" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><circle cx="17.5" cy="6.5" r="1.5"></circle>
-       </svg></a>  <a href="admin.html" class="social-btn w-10 h-10 rounded-full glass-card bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 hover:border-white/20 transition-all duration-300" aria-label="Admin">
-       <svg width="18" height="18" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-       </svg></a>
-     </nav>
-    </header><!-- Loading State -->
+      <p id="profile-bio" class="text-sm text-gray-400 max-w-xs mx-auto leading-relaxed font-light"></p>
+      
+      <nav class="flex justify-center gap-3 mt-5" aria-label="Social links">
+        <a id="social-github" href="#" target="_blank" rel="noopener noreferrer" class="social-btn w-10 h-10 rounded-full glass-card bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 hover:border-white/20" aria-label="GitHub" style="display:none;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+          </svg>
+        </a>
+        <a id="social-linkedin" href="#" target="_blank" rel="noopener noreferrer" class="social-btn w-10 h-10 rounded-full glass-card bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 hover:border-white/20" aria-label="LinkedIn" style="display:none;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle>
+          </svg>
+        </a>
+        <a id="social-instagram" href="#" target="_blank" rel="noopener noreferrer" class="social-btn w-10 h-10 rounded-full glass-card bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 hover:border-white/20" aria-label="Instagram" style="display:none;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><circle cx="17.5" cy="6.5" r="1.5"></circle>
+          </svg>
+        </a>
+        <a href="admin.html" class="social-btn w-10 h-10 rounded-full glass-card bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 hover:border-white/20 transition-all duration-300" aria-label="Admin">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+        </a>
+      </nav>
+    </header>
+
+    <!-- Loading State -->
     <div id="loading-state" class="flex flex-col items-center justify-center py-16">
-     <div class="relative">
-      <div class="w-10 h-10 border-2 border-indigo-500/30 rounded-full animate-spin-slow"></div>
-      <div class="absolute inset-0 w-10 h-10 border-2 border-transparent border-t-indigo-400 rounded-full animate-spin-slow"></div>
-     </div>
-     <p class="text-gray-500 text-sm mt-4 font-light">Loading links...</p>
-    </div><!-- Empty State -->
+      <div class="relative">
+        <div class="w-10 h-10 border-2 border-indigo-500/30 rounded-full animate-spin-slow"></div>
+        <div class="absolute inset-0 w-10 h-10 border-2 border-transparent border-t-indigo-400 rounded-full animate-spin-slow"></div>
+      </div>
+      <p class="text-gray-500 text-sm mt-4 font-light">Loading links...</p>
+    </div>
+
+    <!-- Empty State -->
     <div id="empty-state" class="hidden text-center py-16">
-     <div class="animate-float inline-block mb-4">
-      <div class="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mx-auto"><i data-lucide="link-2" style="width:28px; height:28px; color: #4b5563;"></i>
+      <div class="animate-float inline-block mb-4">
+        <div class="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mx-auto">
+          <i data-lucide="link-2" style="width:28px; height:28px; color: #4b5563;"></i>
+        </div>
       </div>
-     </div>
-     <p class="text-gray-500 text-sm font-light">No links yet</p>
-     <p class="text-gray-600 text-xs mt-1">Add your first link above to get started</p>
+      <p class="text-gray-500 text-sm font-light">No links yet</p>
+      <p class="text-gray-600 text-xs mt-1">Add your first link above to get started</p>
     </div>
+
     <!-- View Toggle -->
-    <div id="view-toggle"
-        class="hidden mb-4 flex justify-center">
-        
-        <div class="glass-card bg-white/5 border border-white/10 rounded-xl p-1 flex gap-1">
-            
-            <button id="list-view-btn"
-                    class="view-btn active px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg text-xs sm:text-sm text-white bg-white/10 transition-all">
-                ☰ List
-            </button>
-
-            <button id="grid-view-btn"
-                    class="view-btn px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg text-xs sm:text-sm text-gray-400 transition-all">
-                ⊞ Grid
-            </button>
-
-        </div>
-
+    <div id="view-toggle" class="hidden mb-4 flex justify-center">
+      <div class="glass-card bg-white/5 border border-white/10 rounded-xl p-1 flex gap-1">
+        <button id="list-view-btn" class="view-btn active px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg text-xs sm:text-sm text-white bg-white/10 transition-all">☰ List</button>
+        <button id="grid-view-btn" class="view-btn px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg text-xs sm:text-sm text-gray-400 transition-all">⊞ Grid</button>
+      </div>
     </div>
+
     <!-- Links Container -->
-    <section id="links-container" class="space-y-3 hidden" aria-label="Links"></section><!-- Footer -->
+    <section id="links-container" class="space-y-3 hidden" aria-label="Links"></section>
+
+    <!-- Footer -->
     <footer class="text-center mt-12 animate-fade-up" style="animation-delay: 0.6s;">
-     <div class="flex items-center justify-center gap-1.5 text-gray-600 text-xs"><span>Made by</span> <span class="gradient-text font-semibold">Shankar Prasad Pyke</span>
-     </div>
+      <div class="flex items-center justify-center gap-1.5 text-gray-600 text-xs">
+        <span>Made by</span> <span class="gradient-text font-semibold">Shankar Prasad Pyke</span>
+      </div>
     </footer>
-   </main><!-- Toast container -->
-   <div id="toast-container" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 flex flex-col gap-2 items-center pointer-events-none"></div>
-  </div>
+  </main>
 
-  <!-- Link Popup -->
-  <div id="link-popup"
-  class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-xl p-4">
+  <!-- Toast container -->
+  <div id="toast-container" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 flex flex-col gap-2 items-center pointer-events-none"></div>
+</div>
 
-    <div id="popup-box"
-    class="w-full max-w-md mx-4
-    max-h-[85vh]
-    overflow-y-auto
-    glass-card
-    rounded-3xl
-    p-6 pb-7
-    animate-fade-up
-    border border-white/10">
-
-      <div class="flex justify-between items-center mb-4">
-        <h2 id="popup-header" class="text-xl sm:text-lg font-semibold">Link Info</h2>
-
-        <button onclick="closePopup()"
-        class="w-8 h-8 flex items-center justify-center rounded-full bg-white/10 text-white">
-        ✕
-        </button>
-      </div>
-
-      <div class="flex items-center gap-4 mb-4">
-        <div id="popup-icon"
-        class="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center text-xl"></div>
-
-        <div class="flex-1">
-          <h3 id="popup-title" class="font-semibold"></h3>
-          <p id="popup-date" class="text-xs text-gray-400"></p>
-        </div>
-      </div>
-
-      <p id="popup-desc" class="text-[15px] leading-relaxed mb-6"></p>
-
-      <a id="popup-link"
-      target="_blank"
-      class="block text-center w-full py-3 rounded-xl font-medium">
-      Open Link
-      </a>
-
+<!-- Link Popup -->
+<div id="link-popup" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-xl p-4">
+  <div id="popup-box" class="w-full max-w-md mx-4 max-h-[85vh] overflow-y-auto glass-card rounded-3xl p-6 pb-7 animate-fade-up border border-white/10">
+    <div class="flex justify-between items-center mb-4">
+      <h2 id="popup-header" class="text-xl sm:text-lg font-semibold text-white">Link Info</h2>
+      <button onclick="closePopup()" class="w-8 h-8 flex items-center justify-center rounded-full bg-white/10 text-white">✕</button>
     </div>
-
+    <div class="flex items-center gap-4 mb-4">
+      <div id="popup-icon" class="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center text-xl"></div>
+      <div class="flex-1">
+        <h3 id="popup-title" class="font-semibold text-white"></h3>
+        <p id="popup-date" class="text-xs text-gray-400"></p>
+      </div>
+    </div>
+    <p id="popup-desc" class="text-[15px] leading-relaxed mb-6 text-slate-200"></p>
+    <a id="popup-link" href="#" target="_blank" class="block text-center w-full py-3 rounded-xl font-medium">Open Link</a>
   </div>
+</div>
 
-  <script type="module">
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getFirestore, collection, onSnapshot, doc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { 
-    getFirestore,
-    collection,
-    getDocs,
-    onSnapshot,
-    doc,
-    updateDoc,
-    increment
-    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  const firebaseConfig = {
+    apiKey: "AIzaSyC5LZc2JsBsCk0sEwG6Z2zwkvruL32fsic",
+    authDomain: "linkhub-cc92b.firebaseapp.com",
+    projectId: "linkhub-cc92b",
+    storageBucket: "linkhub-cc92b.firebasestorage.app",
+    messagingSenderId: "91268082238",
+    appId: "1:91268082238:web:989e158f2eba91a444ff6f"
+  };
+  const app = initializeApp(firebaseConfig);
+  window.db = getFirestore(app);
+  window.collection = collection;
+  window.onSnapshot = onSnapshot;
+  window.doc = doc;
+  window.updateDoc = updateDoc;
+  window.increment = increment;
+</script>
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyC5LZc2JsBsCk0sEwG6Z2zwkvruL32fsic",
-      authDomain: "linkhub-cc92b.firebaseapp.com",
-      projectId: "linkhub-cc92b",
-      storageBucket: "linkhub-cc92b.firebasestorage.app",
-      messagingSenderId: "91268082238",
-      appId: "1:91268082238:web:989e158f2eba91a444ff6f"
-    };
+<script>
+  // --- State ---
+  let allLinks = [];
+  let currentView = "list";
 
-    const app = initializeApp(firebaseConfig);
+  // --- Default Config ---
+  const defaultConfig = {
+    background_color: '#0f0b1e',
+    surface_color: '#1a1035',
+    text_color: '#e2e8f0',
+    primary_action_color: '#6366f1',
+    secondary_action_color: '#ec4899',
+    font_family: 'Outfit',
+    font_size: 14,
+    profile_name: 'Shankar Prasad Pyke',
+    profile_bio: 'Designer, developer & creative thinker. Building things that matter.',
+    github_url: 'https://github.com/shankar2006458',
+    linkedin_url: 'https://www.linkedin.com/in/shankar-prasad-pyke-989257371/',
+    instagram_url: 'https://www.instagram.com/offx._.shankar?igsh=cGNnaGI1M3dyb2Zu'
+  };
 
-    window.db = getFirestore(app);
-    window.collection = collection;
-    window.getDocs = getDocs;
-    window.onSnapshot = onSnapshot;
-    window.doc = doc;
-    window.updateDoc = updateDoc;
-    window.increment = increment;
+  const emojiPool = ['🔗', '🌐', '📎', '💡', '⚡', '🎯', '📌', '✨'];
+  function getEmoji(emoji, index) { return emoji || emojiPool[index % emojiPool.length]; }
 
-  </script>
-  <script>
-    // ── State ──
-    let allLinks = [];
-    let currentView = "list";
+  function showToast(message, type = 'success') {
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    const colors = type === 'success' ? 'bg-emerald-500/90 text-white' : 'bg-red-500/90 text-white';
+    toast.className = `toast-enter pointer-events-auto px-4 py-2.5 rounded-xl text-xs font-medium ${colors} glass-card shadow-lg`;
+    toast.textContent = message;
+    container.appendChild(toast);
+    setTimeout(() => { toast.style.opacity = '0'; toast.style.transition = 'opacity 0.3s'; }, 2500);
+    setTimeout(() => toast.remove(), 2800);
+  }
 
-    // ── Default Config ──
-    const defaultConfig = {
-      background_color: '#0f0b1e',
-      surface_color: '#1a1035',
-      text_color: '#e2e8f0',
-      primary_action_color: '#6366f1',
-      secondary_action_color: '#ec4899',
-      font_family: 'Outfit',
-      font_size: 14,
-      profile_name: 'Shankar Prasad Pyke',
-      profile_bio: 'Designer, developer & creative thinker. Building things that matter.',
-      github_url: 'https://github.com/shankar2006458',
-      linkedin_url: 'https://www.linkedin.com/in/shankar-prasad-pyke-989257371/',
-      instagram_url: 'https://www.instagram.com/offx._.shankar?igsh=cGNnaGI1M3dyb2Zu'
-    };
-
-    // ── Utility: Emoji fallback pool ──
-    const emojiPool = ['🔗', '🌐', '📎', '💡', '⚡', '🎯', '📌', '✨'];
-    function getEmoji(emoji, index) {
-      return emoji || emojiPool[index % emojiPool.length];
+  async function trackClick(linkId) {
+    if (!linkId) return;
+    try {
+      await updateDoc(doc(db, "links", linkId), { clicks: increment(1) });
+    } catch (err) {
+      console.error("Click update failed", err);
     }
+  }
 
-    // ── Toast Notification ──
-    function showToast(message, type = 'success') {
-      const container = document.getElementById('toast-container');
-      const toast = document.createElement('div');
-      const colors = type === 'success' ? 'bg-emerald-500/90 text-white' : 'bg-red-500/90 text-white';
-      toast.className = `toast-enter pointer-events-auto px-4 py-2.5 rounded-xl text-xs font-medium ${colors} glass-card shadow-lg`;
-      toast.textContent = message;
-      container.appendChild(toast);
-      setTimeout(() => { toast.style.opacity = '0'; toast.style.transition = 'opacity 0.3s'; }, 2500);
-      setTimeout(() => toast.remove(), 2800);
+  // --- Load Links with real-time updates ---
+  function loadLinks() {
+    if (!window.db) { setTimeout(loadLinks, 200); return; }
+    onSnapshot(collection(db, "links"), (snapshot) => {
+      const links = [];
+      snapshot.forEach(docSnap => { links.push({ id: docSnap.id, ...docSnap.data() }); });
+      renderLinks(links);
+    });
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  // --- Render Links (optimised, preserves existing cards) ---
+  function renderLinks(data) {
+    allLinks = data;
+    const container = document.getElementById('links-container');
+    const loadingState = document.getElementById('loading-state');
+    const emptyState = document.getElementById('empty-state');
+    container.innerHTML = "";
+    loadingState.classList.add('hidden');
+
+    const published = data.filter(l => l.published);
+    published.sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
+
+    if (published.length === 0) {
+      container.classList.add('hidden');
+      emptyState.classList.remove('hidden');
+      return;
     }
+    emptyState.classList.add('hidden');
+    container.classList.remove('hidden');
 
-    // ── Load Links from Firestore ──
-    function loadLinks(){
-
-      if(!window.db){
-        setTimeout(loadLinks,200);
-        return;
-      }
-
-      onSnapshot(collection(window.db,"links"), (snapshot)=>{
-
-        const links = [];
-
-        snapshot.forEach(doc=>{
-          links.push({
-            id: doc.id,
-            ...doc.data()
-          });
-        });
-
-        renderLinks(links);
-
-      });
-
+    if (currentView === "grid") {
+      container.className = "grid grid-cols-2 gap-2 sm:gap-4";
+    } else {
+      container.className = "space-y-3";
     }
+    document.getElementById('view-toggle').classList.remove('hidden');
 
+    // Map existing cards
+    const existingCards = new Map();
+    container.querySelectorAll('[data-link-id]').forEach(el => { existingCards.set(el.dataset.linkId, el); });
+    const currentIds = new Set(published.map(l => l.id));
+    existingCards.forEach((el, id) => { if (!currentIds.has(id)) el.remove(); });
 
-    // ── Render Links ──
-    function renderLinks(data) {
-      allLinks = data;
-      const container = document.getElementById('links-container');
-      const loadingState = document.getElementById('loading-state');
-      const emptyState = document.getElementById('empty-state');
-      container.innerHTML = "";
+    // Create or update cards
+    published.forEach((link, index) => {
+      const id = link.id;
+      const existing = existingCards.get(id);
+      if (existing) {
+        // Update existing card
+        const titleEl = existing.querySelector('.link-title');
+        const descEl = existing.querySelector('.link-desc');
+        const emojiEl = existing.querySelector('.link-emoji');
+        const arrowLink = existing.querySelector('.card-arrow');
+        if (titleEl) titleEl.textContent = link.title || 'Untitled';
+        if (descEl) descEl.textContent = link.description || '';
+        if (emojiEl) emojiEl.textContent = getEmoji(link.thumbnail, index);
+        if (arrowLink) arrowLink.href = link.url || '#';
+      } else {
+        // Create new card
+        const card = document.createElement('div');
+        card.dataset.linkId = id;
+        card.className = "link-card animate-fade-up";
+        card.style.animationDelay = `${0.1 + index * 0.08}s`;
 
-      loadingState.classList.add('hidden');
+        const emoji = getEmoji(link.thumbnail, index);
+        const desc = link.description ? `<p class="link-desc text-xs text-white/70 mt-1 ${currentView === "grid" ? "line-clamp-2 text-center" : "line-clamp-1"}">${escapeHtml(link.description)}</p>` : "";
+        
+        const cardLayout = currentView === "grid"
+          ? "flex flex-col items-center text-center p-4 sm:p-5 min-h-[140px] sm:min-h-[160px]"
+          : "flex items-center gap-3 sm:gap-4 p-3 sm:p-4";
+        const emojiSize = "w-12 h-12 sm:w-14 sm:h-14 text-xl sm:text-2xl";
 
-      // Filter only published links
-      const published = data.filter(l => l.published);
-      published.sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
-
-      if (published.length === 0) {
-        container.classList.add('hidden');
-        emptyState.classList.remove('hidden');
-        return;
-      }
-
-      emptyState.classList.add('hidden');
-      container.classList.remove('hidden');
-      if(currentView === "grid"){
-        container.className = "grid grid-cols-2 gap-2 sm:gap-4";
-      }else{
-        container.className = "space-y-3";
-      }
-      document.getElementById('view-toggle').classList.remove('hidden');
-
-      // Build a map of existing card elements
-      const existingCards = new Map();
-      container.querySelectorAll('[data-link-id]').forEach(el => {
-        existingCards.set(el.dataset.linkId, el);
-      });
-
-      const currentIds = new Set(published.map(l => l.id || l.__backendId));
-
-      // Remove cards no longer present
-      existingCards.forEach((el, id) => {
-        if (!currentIds.has(id)) el.remove();
-      });
-
-      // Update or create cards
-      published.forEach((link, index) => {
-        const id = link.id || link.__backendId;
-        const existing = existingCards.get(id);
-
-        if (existing) {
-          // Update in place
-          const titleEl = existing.querySelector('.link-title');
-          const descEl = existing.querySelector('.link-desc');
-          const emojiEl = existing.querySelector('.link-emoji');
-          const anchor = existing.querySelector('a');
-          if (titleEl) titleEl.textContent = link.title || 'Untitled';
-          if (descEl) descEl.textContent = link.description || '';
-          if (emojiEl) emojiEl.textContent = getEmoji(link.thumbnail, index);
-          if (anchor) anchor.href = link.url || '#';
-        } else {
-          // Create new card
-          const card = document.createElement('div');
-          card.dataset.linkId = id;
-          card.className =
-            currentView === "grid"
-            ? "link-card animate-fade-up"
-            : "link-card animate-fade-up";
-          card.style.animationDelay = `${0.1 + index * 0.08}s`;
-
-          const emoji = getEmoji(link.thumbnail, index);
-          const desc = link.description
-            ? `<p class="link-desc text-xs text-white/70 mt-1 ${
-                currentView === "grid"
-                  ? "line-clamp-2 text-center"
-                  : "line-clamp-1"
-              }">${escapeHtml(link.description)}</p>`
-            : "";
-
-          let createdDate = '';
-
-          if (link.createdAt) {
-            if (link.createdAt.seconds) {
-              createdDate = new Date(link.createdAt.seconds * 1000);
-            } else {
-              createdDate = new Date(link.createdAt);
-            }
-          }
-
-          // Responsive card layout
-          const cardLayout =
-            currentView === "grid"
-              ? "flex flex-col items-center text-center p-4 sm:p-5 min-h-[140px] sm:min-h-[160px]"
-              : "flex items-center gap-3 sm:gap-4 p-3 sm:p-4";
-
-          const emojiSize = currentView === "grid"
-            ? "w-12 h-12 sm:w-14 sm:h-14 text-xl sm:text-2xl"
-            : "w-12 h-12 sm:w-14 sm:h-14 text-xl sm:text-2xl";
-              
-          card.innerHTML = `
-          <div onclick='openPopup(${JSON.stringify(link)})'
-          class="${cardLayout} glass-card bg-white/[0.04] border border-white/[0.08] rounded-2xl hover:bg-white/[0.08] hover:border-white/[0.15] hover:shadow-lg group cursor-pointer">
-
+        // Build inner HTML
+        card.innerHTML = `
+          <div onclick='openPopup(${JSON.stringify(link)})' class="${cardLayout} glass-card bg-white/[0.04] border border-white/[0.08] rounded-2xl hover:bg-white/[0.08] hover:border-white/[0.15] hover:shadow-lg group cursor-pointer">
             <div class="link-emoji ${emojiSize} rounded-2xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 border border-white/[0.06] flex items-center justify-center ${currentView === 'grid' ? 'mb-2 sm:mb-3' : ''}">${emoji}</div>
-
             <div class="flex-1 min-w-0 w-full">
               <h3 class="link-title shiny-text text-sm font-semibold ${currentView === 'grid' ? 'text-center' : ''} line-clamp-2">${escapeHtml(link.title || 'Untitled')}</h3>
               ${desc}
             </div>
-
-            <!-- Arrow button -->
             ${currentView === "list" ? `
-            <a href="${escapeHtml(link.url || '#')}"
-            onclick="event.stopPropagation(); trackClick('${id}')"
-            target="_blank"
-            class="flex-shrink-0 w-8 h-8 rounded-full bg-white/[0.04] flex items-center justify-center text-gray-400 hover:text-indigo-400">
-            <i data-lucide="arrow-right" style="width:16px;height:16px;"></i>
+            <a href="${escapeHtml(link.url || '#')}" onclick="event.stopPropagation(); trackClick('${id}')" target="_blank" class="card-arrow flex-shrink-0 w-8 h-8 rounded-full bg-white/[0.04] flex items-center justify-center text-gray-400 hover:text-indigo-400">
+              <i data-lucide="arrow-right" style="width:16px;height:16px;"></i>
             </a>
             ` : ''}
-
           </div>
-          `;
-          container.appendChild(card);
-        }
-      });
-
-      lucide.createIcons();
-    }
-
-    function escapeHtml(str) {
-      const div = document.createElement('div');
-      div.textContent = str;
-      return div.innerHTML;
-    }
-
-    async function trackClick(linkId){
-
-      try{
-
-        await updateDoc(
-          doc(db,"links",linkId),
-          { clicks: increment(1) }
-        );
-
-      }catch(err){
-        console.error("Click update failed",err);
-      }
-
-    }
-
-    // ── Link Popup ──
-    function openPopup(link){
-
-      const popup = document.getElementById("link-popup");
-
-      document.getElementById("popup-title").textContent = link.title || "Untitled";
-      document.getElementById("popup-desc").textContent = link.description || "No description";
-
-      document.getElementById("popup-icon").textContent = link.thumbnail || "🔗";
-
-      let date = "";
-      if(link.createdAt){
-        if(link.createdAt.seconds){
-          date = new Date(link.createdAt.seconds * 1000);
-        }else{
-          date = new Date(link.createdAt);
-        }
-      }
-
-      document.getElementById("popup-date").textContent =
-        date ? date.toLocaleDateString() : "";
-
-      const linkBtn = document.getElementById("popup-link");
-      linkBtn.href = link.url || "#";
-
-      popup.classList.remove("hidden");
-      popup.classList.add("flex");
-
-    }
-
-    document.getElementById("link-popup").addEventListener("click",(e)=>{
-      if(e.target.id === "link-popup"){
-        closePopup()
+        `;
+        container.appendChild(card);
       }
     });
+    lucide.createIcons();
+  }
 
-    function closePopup(){
-      const popup = document.getElementById("link-popup");
-      popup.classList.remove("flex");
-      popup.classList.add("hidden");
+  // --- Popup logic (FIXED: tracking + no double navigation) ---
+  window.openPopup = function(link) {
+    const popup = document.getElementById("link-popup");
+    document.getElementById("popup-title").textContent = link.title || "Untitled";
+    document.getElementById("popup-desc").textContent = link.description || "No description";
+    document.getElementById("popup-icon").textContent = link.thumbnail || "🔗";
+
+    let date = "";
+    if (link.createdAt) {
+      if (link.createdAt.seconds) date = new Date(link.createdAt.seconds * 1000);
+      else date = new Date(link.createdAt);
     }
+    document.getElementById("popup-date").textContent = date ? date.toLocaleDateString() : "";
 
-    // ── Apply Config to UI ──
-    function applyConfig(config) {
-      const c = { ...defaultConfig, ...config };
-      const customFont = c.font_family || defaultConfig.font_family;
-      const baseFontStack = 'Outfit, sans-serif';
-      const fontStack = `${customFont}, ${baseFontStack}`;
-      const baseSize = c.font_size || defaultConfig.font_size;
+    const linkBtn = document.getElementById("popup-link");
+    linkBtn.href = link.url || "#";
+    linkBtn.target = "_blank";
+    // Remove previous onclick to avoid multiple bindings
+    linkBtn.onclick = function() {
+      trackClick(link.id);
+    };
+    popup.classList.remove("hidden");
+    popup.classList.add("flex");
+  };
 
-      // Profile
-      const nameEl = document.getElementById('profile-name');
-      const bioEl = document.getElementById('profile-bio');
-      const avatarEl = document.getElementById('profile-avatar');
-      nameEl.textContent = c.profile_name || defaultConfig.profile_name;
-      nameEl.style.fontFamily = `'Playfair Display', ${fontStack}`;
-      nameEl.style.fontSize = `${baseSize * 1.6}px`;
-      nameEl.style.color = c.text_color || defaultConfig.text_color;
+  window.closePopup = function() {
+    const popup = document.getElementById("link-popup");
+    popup.classList.remove("flex");
+    popup.classList.add("hidden");
+  };
 
-      bioEl.textContent = c.profile_bio || defaultConfig.profile_bio;
-      bioEl.style.fontFamily = fontStack;
-      bioEl.style.fontSize = `${baseSize * 0.9}px`;
+  document.getElementById("link-popup").addEventListener("click", (e) => {
+    if (e.target.id === "link-popup") closePopup();
+  });
 
-      // Social links visibility
-      const socials = [
-        { id: 'social-github', key: 'github_url' },
-        { id: 'social-linkedin', key: 'linkedin_url' },
-        { id: 'social-instagram', key: 'instagram_url' }
-      ];
-      socials.forEach(s => {
-        const el = document.getElementById(s.id);
-        const url = c[s.key];
-        if (url && url.trim()) {
-          el.style.display = 'flex';
-          el.href = url;
-        } else {
-          el.style.display = 'none';
-        }
-      });
+  // --- Apply visual config ---
+  function applyConfig(config) {
+    const c = { ...defaultConfig, ...config };
+    const fontStack = `${c.font_family}, Outfit, sans-serif`;
+    const baseSize = c.font_size;
 
-      // Colors
-      const bgColor = c.background_color || defaultConfig.background_color;
-      const surfaceColor = c.surface_color || defaultConfig.surface_color;
-      const primaryColor = c.primary_action_color || defaultConfig.primary_action_color;
-      const secondaryColor = c.secondary_action_color || defaultConfig.secondary_action_color;
-
-      const wrapper = document.getElementById('app-wrapper');
-      wrapper.style.background = `linear-gradient(145deg, ${bgColor} 0%, ${surfaceColor} 30%, ${adjustColor(bgColor, 10)} 60%, ${bgColor} 100%)`;
-
-      // Primary button color
-      const submitBtn = document.getElementById('submit-link-btn');
-      if (submitBtn) {
-        submitBtn.style.backgroundColor = primaryColor;
-      }
-
-      // Font for general body
-      document.body.style.fontFamily = fontStack;
-      document.body.style.fontSize = `${baseSize}px`;
-
-      // Update link card titles font
-      document.querySelectorAll('.link-title').forEach(el => {
-        el.style.fontFamily = fontStack;
-        el.style.fontSize = `${baseSize}px`;
-      });
-
-      // Popup styling
-      const popupBox = document.getElementById("popup-box")
-      const popupTitle = document.getElementById("popup-title")
-      const popupHeader = document.getElementById("popup-header")
-      const popupDesc = document.getElementById("popup-desc")
-      const popupBtn = document.getElementById("popup-link")
-
-      if(popupBox){
-
-        popupBox.style.background = surfaceColor
-        popupBox.style.color = c.text_color
-
-      }
-
-      if(popupTitle) popupTitle.style.color = c.text_color
-      if(popupHeader) popupHeader.style.color = c.text_color
-      if(popupDesc) popupDesc.style.color = "#9ca3af"
-
-      if(popupBtn){
-        popupBtn.style.background = primaryColor
-        popupBtn.style.color = "#fff"
-      }
-    }
-
-    function adjustColor(hex, amount) {
-      // Simple brightness shift
-      let r = parseInt(hex.slice(1,3), 16);
-      let g = parseInt(hex.slice(3,5), 16);
-      let b = parseInt(hex.slice(5,7), 16);
-      r = Math.min(255, r + amount);
-      g = Math.min(255, g + amount);
-      b = Math.min(255, b + amount);
-      return `#${r.toString(16).padStart(2,'0')}${g.toString(16).padStart(2,'0')}${b.toString(16).padStart(2,'0')}`;
-    }
-
-    // ── Form Handling ──
-    // Removed - no longer adding links on public page
-
-    const listBtn = document.getElementById("list-view-btn");
-    const gridBtn = document.getElementById("grid-view-btn");
-
-    function updateViewButtons() {
-
-      if(currentView === "list"){
-
-        listBtn.classList.add("bg-white/10","text-white");
-        listBtn.classList.remove("text-gray-400");
-
-        gridBtn.classList.remove("bg-white/10","text-white");
-        gridBtn.classList.add("text-gray-400");
-
-      }else{
-
-        gridBtn.classList.add("bg-white/10","text-white");
-        gridBtn.classList.remove("text-gray-400");
-
-        listBtn.classList.remove("bg-white/10","text-white");
-        listBtn.classList.add("text-gray-400");
-
-      }
-
-    }
-
-    listBtn.addEventListener("click", () => {
-      currentView = "list";
-      updateViewButtons();
-      renderLinks(allLinks);
+    document.getElementById('profile-name').textContent = c.profile_name;
+    document.getElementById('profile-bio').textContent = c.profile_bio;
+    
+    const socials = [
+      { id: 'social-github', key: 'github_url' },
+      { id: 'social-linkedin', key: 'linkedin_url' },
+      { id: 'social-instagram', key: 'instagram_url' }
+    ];
+    socials.forEach(s => {
+      const el = document.getElementById(s.id);
+      const url = c[s.key];
+      if (url && url.trim()) {
+        el.style.display = 'flex';
+        el.href = url;
+      } else el.style.display = 'none';
     });
 
-    gridBtn.addEventListener("click", () => {
-      currentView = "grid";
-      updateViewButtons();
-      renderLinks(allLinks);
-    });
+    const wrapper = document.getElementById('app-wrapper');
+    wrapper.style.background = `linear-gradient(145deg, ${c.background_color} 0%, ${c.surface_color} 30%, ${adjustColor(c.background_color, 10)} 60%, ${c.background_color} 100%)`;
+    document.body.style.fontFamily = fontStack;
+    document.body.style.fontSize = `${baseSize}px`;
 
-    // Apply defaults on load
-    updateViewButtons();
-    applyConfig(defaultConfig);
-    loadLinks();
+    const popupBox = document.getElementById("popup-box");
+    const popupBtn = document.getElementById("popup-link");
+    const popupHeader = document.getElementById("popup-header");
+    const popupTitle = document.getElementById("popup-title");
+    const popupDesc = document.getElementById("popup-desc");
+    const popupDate = document.getElementById("popup-date");
 
-  </script>
+    if (popupBox) {
+      popupBox.style.background = c.surface_color;
+      popupBox.style.color = c.text_color;
+    }
+
+    if (popupHeader) popupHeader.style.color = c.text_color;
+    if (popupTitle) popupTitle.style.color = c.text_color;
+    if (popupDesc) popupDesc.style.color = "#cbd5e1";
+    if (popupDate) popupDate.style.color = "#94a3b8";
+
+    if (popupBtn) {
+      popupBtn.style.background = c.primary_action_color;
+      popupBtn.style.color = "#ffffff";
+    }
+  }
+
+  function adjustColor(hex, amount) {
+    let r = parseInt(hex.slice(1,3), 16);
+    let g = parseInt(hex.slice(3,5), 16);
+    let b = parseInt(hex.slice(5,7), 16);
+    r = Math.min(255, Math.max(0, r + amount));
+    g = Math.min(255, Math.max(0, g + amount));
+    b = Math.min(255, Math.max(0, b + amount));
+    return `#${r.toString(16).padStart(2,'0')}${g.toString(16).padStart(2,'0')}${b.toString(16).padStart(2,'0')}`;
+  }
+
+  // --- View Toggle ---
+  const listBtn = document.getElementById("list-view-btn");
+  const gridBtn = document.getElementById("grid-view-btn");
+  function updateViewButtons() {
+    if (currentView === "list") {
+      listBtn.classList.add("bg-white/10", "text-white");
+      listBtn.classList.remove("text-gray-400");
+      gridBtn.classList.remove("bg-white/10", "text-white");
+      gridBtn.classList.add("text-gray-400");
+    } else {
+      gridBtn.classList.add("bg-white/10", "text-white");
+      gridBtn.classList.remove("text-gray-400");
+      listBtn.classList.remove("bg-white/10", "text-white");
+      listBtn.classList.add("text-gray-400");
+    }
+  }
+  listBtn.addEventListener("click", () => { currentView = "list"; updateViewButtons(); renderLinks(allLinks); });
+  gridBtn.addEventListener("click", () => { currentView = "grid"; updateViewButtons(); renderLinks(allLinks); });
+
+  // Initialise
+  updateViewButtons();
+  applyConfig(defaultConfig);
+  loadLinks();
+</script>
+</body>
 </html>
