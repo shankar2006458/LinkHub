@@ -261,6 +261,62 @@
   // --- State ---
   let allLinks = [];
   let currentView = "list";
+  let scrollRestoreAttempts = 0;
+  const MAX_SCROLL_ATTEMPTS = 10;
+
+  // ADD THIS ENTIRE BLOCK HERE:
+function saveScrollPosition() {
+  sessionStorage.setItem('linkhub_scroll', window.scrollY || document.documentElement.scrollTop);
+}
+
+function restoreScrollPosition() {
+  const savedPosition = sessionStorage.getItem('linkhub_scroll');
+  if (savedPosition) {
+    const targetY = parseInt(savedPosition);
+    if (targetY > 0) {
+      // Multiple attempts to ensure scroll restoration
+      const attemptScroll = (attempts = 0) => {
+        window.scrollTo(0, targetY);
+        
+        // Check if we need to retry
+        const currentY = window.scrollY || document.documentElement.scrollTop;
+        if (Math.abs(currentY - targetY) > 50 && attempts < 5) {
+          setTimeout(() => attemptScroll(attempts + 1), 150);
+        }
+      };
+      
+      // Start attempts
+      requestAnimationFrame(() => attemptScroll());
+    }
+  }
+  
+  // Also clear the saved position after restoring
+  // sessionStorage.removeItem('linkhub_scroll');
+}
+
+// Save on scroll (debounced)
+let scrollTimeout;
+window.addEventListener('scroll', () => {
+  clearTimeout(scrollTimeout);
+  scrollTimeout = setTimeout(saveScrollPosition, 150);
+}, { passive: true });
+
+// Save before leaving
+window.addEventListener('beforeunload', saveScrollPosition);
+window.addEventListener('pagehide', saveScrollPosition);
+
+// Restore when page becomes visible again (returning from link)
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') {
+    setTimeout(restoreScrollPosition, 200);
+  }
+});
+
+// Restore on initial load
+window.addEventListener('load', () => {
+  setTimeout(restoreScrollPosition, 300);
+});
+
 
   // --- Default Config ---
   const defaultConfig = {
@@ -302,12 +358,24 @@
   }
 
   // --- Load Links with real-time updates ---
-  function loadLinks() {
+function loadLinks() {
     if (!window.db) { setTimeout(loadLinks, 200); return; }
+    
+    let initialLoad = true;
+    
     onSnapshot(collection(db, "links"), (snapshot) => {
       const links = [];
       snapshot.forEach(docSnap => { links.push({ id: docSnap.id, ...docSnap.data() }); });
       renderLinks(links);
+      
+      // Only restore scroll on initial load or when returning to page
+      if (initialLoad || document.visibilityState === 'visible') {
+        setTimeout(() => {
+          restoreScrollPosition();
+          scrollRestoreAttempts = 0;
+        }, 100);
+      }
+      initialLoad = false;
     });
   }
 
@@ -318,20 +386,24 @@
   }
 
   // --- Render Links (optimised, preserves existing cards) ---
-  function renderLinks(data) {
+function renderLinks(data) {
     allLinks = data;
     const container = document.getElementById('links-container');
     const loadingState = document.getElementById('loading-state');
     const emptyState = document.getElementById('empty-state');
-    container.innerHTML = "";
+    
+    // DON'T clear the entire container - preserve scroll position
+    // container.innerHTML = "";  <- REMOVE THIS LINE
     loadingState.classList.add('hidden');
 
     const published = data.filter(l => l.published);
     published.sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
 
     if (published.length === 0) {
+      container.innerHTML = ""; // Only clear when empty
       container.classList.add('hidden');
       emptyState.classList.remove('hidden');
+      document.getElementById('view-toggle').classList.add('hidden');
       return;
     }
     emptyState.classList.add('hidden');
@@ -344,18 +416,26 @@
     }
     document.getElementById('view-toggle').classList.remove('hidden');
 
-    // Map existing cards
+    // Map existing cards by their data-link-id
     const existingCards = new Map();
-    container.querySelectorAll('[data-link-id]').forEach(el => { existingCards.set(el.dataset.linkId, el); });
+    container.querySelectorAll('[data-link-id]').forEach(el => { 
+      existingCards.set(el.dataset.linkId, el); 
+    });
+    
     const currentIds = new Set(published.map(l => l.id));
-    existingCards.forEach((el, id) => { if (!currentIds.has(id)) el.remove(); });
+    
+    // Remove cards that no longer exist
+    existingCards.forEach((el, id) => { 
+      if (!currentIds.has(id)) el.remove(); 
+    });
 
-    // Create or update cards
+    // Update existing cards or create new ones
     published.forEach((link, index) => {
       const id = link.id;
       const existing = existingCards.get(id);
+      
       if (existing) {
-        // Update existing card
+        // Update existing card without rebuilding
         const titleEl = existing.querySelector('.link-title');
         const descEl = existing.querySelector('.link-desc');
         const emojiEl = existing.querySelector('.link-emoji');
@@ -363,13 +443,27 @@
         if (titleEl) titleEl.textContent = link.title || 'Untitled';
         if (descEl) descEl.textContent = link.description || '';
         if (emojiEl) emojiEl.textContent = getEmoji(link.thumbnail, index);
-        if (arrowLink) arrowLink.href = link.url || '#';
+        if (arrowLink) {
+          arrowLink.href = link.url || '#';
+          arrowLink.onclick = function(event) {
+            event.stopPropagation();
+            saveScrollPosition();
+            trackClick(id);
+          };
+        }
+        // Update the popup onclick
+        const cardInner = existing.querySelector('.glass-card');
+        if (cardInner) {
+          cardInner.onclick = function() {
+            openPopup(link);
+          };
+        }
       } else {
         // Create new card
         const card = document.createElement('div');
         card.dataset.linkId = id;
-        card.className = "link-card animate-fade-up";
-        card.style.animationDelay = `${0.1 + index * 0.08}s`;
+        card.className = "link-card";
+        card.style.opacity = "1"; // Show immediately, no animation for restored cards
 
         const emoji = getEmoji(link.thumbnail, index);
         const desc = link.description ? `<p class="link-desc text-xs text-white/70 mt-1 ${currentView === "grid" ? "line-clamp-2 text-center" : "line-clamp-1"}">${escapeHtml(link.description)}</p>` : "";
@@ -379,29 +473,51 @@
           : "flex items-center gap-3 sm:gap-4 p-3 sm:p-4";
         const emojiSize = "w-12 h-12 sm:w-14 sm:h-14 text-xl sm:text-2xl";
 
-        // Build inner HTML
         card.innerHTML = `
-          <div onclick='openPopup(${JSON.stringify(link)})' class="${cardLayout} glass-card bg-white/[0.04] border border-white/[0.08] rounded-2xl hover:bg-white/[0.08] hover:border-white/[0.15] hover:shadow-lg group cursor-pointer">
+          <div class="${cardLayout} glass-card bg-white/[0.04] border border-white/[0.08] rounded-2xl hover:bg-white/[0.08] hover:border-white/[0.15] hover:shadow-lg group cursor-pointer">
             <div class="link-emoji ${emojiSize} rounded-2xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 border border-white/[0.06] flex items-center justify-center ${currentView === 'grid' ? 'mb-2 sm:mb-3' : ''}">${emoji}</div>
             <div class="flex-1 min-w-0 w-full">
               <h3 class="link-title shiny-text text-sm font-semibold ${currentView === 'grid' ? 'text-center' : ''} line-clamp-2">${escapeHtml(link.title || 'Untitled')}</h3>
               ${desc}
             </div>
             ${currentView === "list" ? `
-            <a href="${escapeHtml(link.url || '#')}" onclick="event.stopPropagation(); trackClick('${id}')" target="_blank" class="card-arrow flex-shrink-0 w-8 h-8 rounded-full bg-white/[0.04] flex items-center justify-center text-gray-400 hover:text-indigo-400">
+            <a href="${escapeHtml(link.url || '#')}" class="card-arrow flex-shrink-0 w-8 h-8 rounded-full bg-white/[0.04] flex items-center justify-center text-gray-400 hover:text-indigo-400">
               <i data-lucide="arrow-right" style="width:16px;height:16px;"></i>
             </a>
             ` : ''}
           </div>
         `;
+        
+        // Add event listeners
+        const cardInner = card.querySelector('.glass-card');
+        if (cardInner) {
+          cardInner.onclick = function() {
+            openPopup(link);
+          };
+        }
+        
+        const arrowLink = card.querySelector('.card-arrow');
+        if (arrowLink) {
+          arrowLink.onclick = function(event) {
+            event.stopPropagation();
+            saveScrollPosition();
+            trackClick(id);
+          };
+        }
+        
         container.appendChild(card);
       }
     });
+    
     lucide.createIcons();
+    
+    // Restore scroll position after rendering
+    restoreScrollPosition();
   }
 
   // --- Popup logic (FIXED: tracking + no double navigation) ---
   window.openPopup = function(link) {
+    saveScrollPosition();
     const popup = document.getElementById("link-popup");
     document.getElementById("popup-title").textContent = link.title || "Untitled";
     document.getElementById("popup-desc").textContent = link.description || "No description";
@@ -419,6 +535,7 @@
     linkBtn.target = "_blank";
     // Remove previous onclick to avoid multiple bindings
     linkBtn.onclick = function() {
+      saveScrollPosition();
       trackClick(link.id);
     };
     popup.classList.remove("hidden");
