@@ -1,4 +1,4 @@
-const VERSION    = "v3";                       // <-- bump this string on every deploy
+const VERSION    = "v4";                       // <-- bump this string on every deploy
 const CACHE_NAME = `link-hub-${VERSION}`;
 
 // Must exist. If any of these 404 the install still succeeds (they're fetched individually).
