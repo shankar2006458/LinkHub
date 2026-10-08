@@ -2,7 +2,7 @@
   "name": "Link Hub",
   "short_name": "Link Hub",
   "description": "A personal link hub for all your important links.",
-  "start_url": "./index.html",
+  "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "background_color": "#0f0b1e",
